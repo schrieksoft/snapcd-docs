@@ -1,0 +1,85 @@
+name: Release
+
+# Builds the Hugo site, syncs it to the Azure Storage account that hosts the
+# static site, and purges Cloudflare's cache so visitors see the new content
+# immediately. Runs on every merge to main and on manual dispatch.
+#
+# Architecture (deployed by `modules/azure/module-docs-infra` in snapcd-all):
+#   * docs.snapcd.io  →  Cloudflare CNAME (proxied=true)  →  Azure Storage
+#     static-website endpoint of a uniquely-named storage account (e.g.
+#     `docs<random8>`).
+#   * Cloudflare proxies every request, so blob-syncing alone isn't enough —
+#     the edge cache must be purged afterwards.
+#
+# Required configuration (Settings → Secrets and variables → Actions → Secrets):
+#
+#   AZURE_STORAGE_ACCOUNT  — the random-suffixed storage account name from
+#                            the module's terraform state (e.g. "docsab12cd34").
+#   AZURE_STORAGE_KEY      — one of the two storage account keys. Same value
+#                            the local `keys.sh` exports.
+#   CLOUDFLARE_ZONE_ID     — same value the module consumes as
+#                            `var.cloudflare_zone_id` for snapcd.io.
+#   CLOUDFLARE_API_TOKEN   — scoped token: Zone → Cache Purge for snapcd.io
+#                            (minimum required permission).
+#
+# Future-proofing: replacing the storage key with an OIDC-federated service
+# principal requires adding `permissions: id-token: write`, swapping the
+# `az storage` step for `azure/login@v2` + `az storage blob sync` without
+# `--account-key`, and configuring a federated credential on the Azure side
+# bound to `repo:schrieksoft/snapcd-docs:ref:refs/heads/main`.
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # hugo.yaml has `enableGitInfo: true`; Hugo needs the full history
+          # to populate `.Lastmod` and friends.
+          fetch-depth: 0
+
+      - name: Setup Hugo (Extended)
+        uses: peaceiris/actions-hugo@v3
+        with:
+          # hugo.yaml requires extended >= 0.112.0. Bump as needed.
+          hugo-version: '0.151.0'
+          extended: true
+
+      - name: Build site
+        run: hugo --gc --minify
+
+      - name: Sync to Azure Storage $web container
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az storage blob sync \
+              --account-name "$AZURE_STORAGE_ACCOUNT" \
+              --account-key "$AZURE_STORAGE_KEY" \
+              --container '$web' \
+              --source ./public \
+              --delete-destination true
+        env:
+          AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+          AZURE_STORAGE_KEY: ${{ secrets.AZURE_STORAGE_KEY }}
+
+      - name: Purge Cloudflare cache
+        env:
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          curl --fail --silent --show-error \
+            -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}'

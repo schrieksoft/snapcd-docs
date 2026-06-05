@@ -1,0 +1,59 @@
+{{/*
+  Recursive JSON Schema renderer. Every property becomes a <details> panel; the summary shows
+  only the name and type. Description, default value, allowed enum values, and nested children
+  all sit inside the expanded body.
+
+  Params:
+    .name      — property name (label for the <summary>)
+    .schema    — the JSON Schema node for this property
+    .topLevel  — true for top-level sections (larger summary)
+*/}}
+{{- $name := .name -}}
+{{- $schema := .schema -}}
+{{- $topLevel := .topLevel -}}
+{{- $hasProperties := isset $schema "properties" -}}
+{{- $additionalProps := index $schema "additionalProperties" -}}
+{{- $hasAddlPropsSchema := and $additionalProps (reflect.IsMap $additionalProps) -}}
+
+<details class="settings-detail hx-rounded hx-border hx-border-neutral-200 dark:hx-border-neutral-700 hx-bg-neutral-50/50 dark:hx-bg-neutral-800/30 hx-px-3 hx-py-2 hx-my-2 hx-group">
+  <summary class="hx-flex hx-flex-wrap hx-items-baseline hx-gap-x-2 hx-cursor-pointer hx-select-none hx-list-none before:hx-mr-1 before:hx-inline-block before:hx-transition-transform before:hx-content-[''] dark:before:hx-invert group-open:before:hx-rotate-90">
+    <code class="hx-font-mono {{ if $topLevel }}hx-text-base hx-font-semibold{{ else }}hx-text-sm hx-font-semibold{{ end }}">{{ $name }}</code>
+    <span class="hx-text-xs hx-text-neutral-500">{{ partial "settings/type-string.html" $schema }}</span>
+  </summary>
+  {{- with (index $schema "default") }}
+  <p class="hx-mt-2 hx-text-sm">
+    <span class="hx-text-xs hx-italic hx-text-neutral-500">Default:</span>
+    <strong class="hx-ml-1">{{ . }}</strong>
+  </p>
+  {{- end }}
+  {{- with $schema.enum }}
+  <p class="hx-mt-2 hx-text-sm">
+    <span class="hx-text-xs hx-italic hx-text-neutral-500">Allowed values:</span>
+    <span class="hx-ml-1">{{- range $i, $v := . }}{{ if $i }}, {{ end }}<strong>{{ $v }}</strong>{{ end -}}</span>
+  </p>
+  {{- end }}
+  {{- with $schema.description }}
+  <p class="hx-mt-2 hx-text-sm hx-text-neutral-700 dark:hx-text-neutral-300">{{ . }}</p>
+  {{- end }}
+  {{- if $hasProperties }}
+    {{- range $key, $value := $schema.properties }}
+      {{- partial "settings/render.html" (dict "name" $key "schema" $value "topLevel" false) -}}
+    {{- end }}
+  {{- end }}
+  {{- if $hasAddlPropsSchema }}
+  <div class="hx-mt-2 hx-text-sm hx-flex hx-flex-wrap hx-items-baseline hx-gap-x-2">
+    <span class="hx-text-xs hx-text-neutral-500 hx-italic">additional keys</span>
+    <span class="hx-text-neutral-400">→</span>
+    <span class="hx-text-xs hx-text-neutral-500">{{ partial "settings/type-string.html" $additionalProps }}</span>
+  </div>
+    {{- with $additionalProps.description }}
+  <p class="hx-text-sm hx-text-neutral-600 dark:hx-text-neutral-400 hx-ml-2">{{ . }}</p>
+    {{- end }}
+    {{- with $additionalProps.enum }}
+  <p class="hx-mt-1 hx-ml-2 hx-text-sm">
+    <span class="hx-text-xs hx-italic hx-text-neutral-500">Allowed values:</span>
+    <span class="hx-ml-1">{{- range $i, $v := . }}{{ if $i }}, {{ end }}<strong>{{ $v }}</strong>{{ end -}}</span>
+  </p>
+    {{- end }}
+  {{- end }}
+</details>

@@ -1,0 +1,35 @@
+{{/*
+  {{< settings component="runner" >}}
+  {{< settings component="server" exclude="Debugging,DebugDataSeeder,PreviewFeatures" >}}
+
+  Renders a settings reference for one Snap CD component from the JSON Schema at
+  data/schemas/<component>.json. Each top-level section becomes a collapsible <details>
+  block; nested objects recurse. Sourced from the same JSON Schema that operators
+  consume via "$schema" in their appsettings.json, so docs and IntelliSense can't drift.
+
+  Params:
+    component  — required; the data file basename under data/schemas/
+    exclude    — optional; comma-separated list of top-level section names to skip
+*/}}
+{{- $component := .Get "component" -}}
+{{- if not $component -}}
+  {{- errorf "{{< settings >}} requires a `component` parameter, e.g. {{< settings component=\"runner\" >}}" -}}
+{{- end -}}
+{{- $excludeRaw := .Get "exclude" | default "" -}}
+{{- $exclude := slice -}}
+{{- range (split $excludeRaw ",") -}}
+  {{- $trimmed := trim . " " -}}
+  {{- if $trimmed -}}{{- $exclude = $exclude | append $trimmed -}}{{- end -}}
+{{- end -}}
+{{- $schema := index .Site.Data.schemas $component -}}
+{{- if not $schema -}}
+  <p class="hx-text-red-600">Settings schema not found for component <code>{{ $component }}</code>. Expected <code>data/schemas/{{ $component }}.json</code>.</p>
+{{- else -}}
+<div class="settings-doc hx-my-4">
+  {{- range $name, $section := $schema.properties -}}
+    {{- if not (in $exclude $name) -}}
+      {{- partial "settings/render.html" (dict "name" $name "schema" $section "topLevel" true) -}}
+    {{- end -}}
+  {{- end -}}
+</div>
+{{- end -}}
