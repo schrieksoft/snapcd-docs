@@ -1,0 +1,22 @@
+{{/*
+  Compact type label for one schema node. Examples:
+    string                              → "string"
+    string with format: uuid            → "string (uuid)"
+    type: ["string", "null"]            → "string | null"
+    enum with explicit type             → "string" (the enum's allowed values are listed in the body)
+    enum without explicit type          → "string" (defaults to string — most enums are JsonStringEnumConverter-rendered)
+    type: array, items: { type: ... }   → "array of <inner>"
+    object with no explicit type        → "object"
+*/}}
+{{- $s := . -}}
+{{- if $s.enum -}}
+  {{- with $s.type -}}{{ . }}{{- else -}}string{{- end -}}
+{{- else if $s.items -}}
+  array of {{ partial "settings/type-string.html" $s.items }}
+{{- else if reflect.IsSlice $s.type -}}
+  {{ delimit $s.type " | " }}
+{{- else if $s.type -}}
+  {{ $s.type }}{{ with $s.format }} ({{ . }}){{ end }}
+{{- else -}}
+  object
+{{- end -}}
