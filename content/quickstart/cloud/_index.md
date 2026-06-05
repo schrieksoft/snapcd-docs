@@ -74,4 +74,4 @@ Snap CD allows you to create [Secrets]({{< relref "resources/secrets" >}}) that 
 
 ## Deploy the Sample Project
 
-In order to see in practice what a typical Snap CD project might look like, deploy [this](https://github.com/schrieksoft/snapcd-sample-deployment) sample project.
+In order to see in practice what a typical Snap CD project might look like, deploy [this](https://github.com/snapcd-samples/sample-deployment) sample project.

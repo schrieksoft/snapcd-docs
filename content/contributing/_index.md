@@ -37,7 +37,7 @@ These ship reference deployments for running Snap CD components in your environm
 
 | Repository | What's in it |
 |------------|--------------|
-| [schrieksoft/snapcd-sample-deployment](https://github.com/schrieksoft/snapcd-sample-deployment) | A worked example using the Terraform provider — walks through Namespaces, Inputs, Secrets, Output Sets and so on, with extensively commented `snapcd_*` resources. The recommended starting point for new users learning the resource model |
+| [snapcd-samples/sample-deployment](https://github.com/snapcd-samples/sample-deployment) | A worked example using the Terraform provider — walks through Namespaces, Inputs, Secrets, Output Sets and so on, with extensively commented `snapcd_*` resources. The recommended starting point for new users learning the resource model |
 
 ### Documentation
 

@@ -21,5 +21,5 @@ Before continuing, please read [the basics]({{< relref "basics" >}}) for an over
 
 ## Deploy the Sample Project
 
-In order to see in practice what a typical Snap CD project might look like, deploy [this](https://github.com/schrieksoft/snapcd-sample-deployment) sample project.
+In order to see in practice what a typical Snap CD project might look like, deploy [this](https://github.com/snapcd-samples/sample-deployment) sample project.
 
