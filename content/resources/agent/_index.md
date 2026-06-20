@@ -17,7 +17,7 @@ An **Agent** defines the configuration for mission execution, including which [S
 |-------|-------------|
 | `name` | Unique name of the Agent |
 | `service_principal_id` | ID of the Service Principal used by Agent Instances to authenticate |
-| `is_assigned_to_all_modules` | When `true`, any Module can be served by this Agent |
+| `is_supplied_to_all_modules` | When `true`, any Module can be served by this Agent |
 | `is_disabled` | When `true`, the Agent will not receive new Missions |
 | `allow_multiple_instances` | When `true`, multiple Agent Instances can connect simultaneously |
 
@@ -32,14 +32,14 @@ An **Agent Instance** is the actual process that supervises **Sidecar** subproce
 
 ## Allowing an Agent to serve a Module
 
-Before an **Agent** can pick up Missions for a **Module**, an assignment must exist. Assignments can be configured at different scopes:
+Before an **Agent** can pick up Missions for a **Module**, a supply must exist. Supplies can be configured at different scopes:
 
 | Method | Description |
 |--------|-------------|
-| `is_assigned_to_all_modules` on Agent | Allows the Agent to serve any Module |
-| [Agent Stack Assignment](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/agent_stack_assignment) | All Modules within the Stack can be served by the Agent |
-| [Agent Namespace Assignment](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/agent_namespace_assignment) | All Modules within the Namespace can be served by the Agent |
-| [Agent Module Assignment](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/agent_module_assignment) | Only the specified Module can be served by the Agent |
+| `is_supplied_to_all_modules` on Agent | Allows the Agent to serve any Module |
+| [Agent Stack Supply](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/agent_stack_supply) | All Modules within the Stack can be served by the Agent |
+| [Agent Namespace Supply](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/agent_namespace_supply) | All Modules within the Namespace can be served by the Agent |
+| [Agent Module Supply](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/agent_module_supply) | Only the specified Module can be served by the Agent |
 
 ## Security Model
 
@@ -52,7 +52,7 @@ Two independent permission axes apply to every Agent:
 
 The Agent record is governed by the management axis. The work the Agent performs against Snap CD (reading jobs, posting approval recommendations, fetching logs) is governed by the Service Principal's operational permissions — exactly as for any other Service Principal call.
 
-Grant the Service Principal only the operational permissions the configured Missions require. Use narrow Agent Assignments to scope which Modules an Agent serves. Use separate Agents for different environments (dev, staging, production) where the underlying permissions differ.
+Grant the Service Principal only the operational permissions the configured Missions require. Use narrow Agent Supplies to scope which Modules an Agent serves. Use separate Agents for different environments (dev, staging, production) where the underlying permissions differ.
 
 ## Edition Availability
 

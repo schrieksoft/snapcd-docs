@@ -41,9 +41,9 @@ Each Mission resource carries the same configuration fields, plus the scope refe
 
 ## Dispatch
 
-When a triggering event occurs, Snap CD evaluates the active set of Mission rows that cover the affected Module Job. For each match, Snap CD checks that the named Agent has an Agent Assignment covering the Module (or has `is_assigned_to_all_modules` set), then dispatches the Mission directly to a connected Agent Instance.
+When a triggering event occurs, Snap CD evaluates the active set of Mission rows that cover the affected Module Job. For each match, Snap CD checks that the named Agent has an Agent Supply covering the Module (or has `is_supplied_to_all_modules` set), then dispatches the Mission directly to a connected Agent Instance.
 
-A Mission whose Agent is online but lacks an assignment covering the Module is parked and will dispatch automatically once a covering assignment is added (or once the Agent's `is_assigned_to_all_modules` flag is enabled).
+A Mission whose Agent is online but lacks a supply covering the Module is parked and will dispatch automatically once a covering supply is added (or once the Agent's `is_supplied_to_all_modules` flag is enabled).
 
 A Mission whose Agent has no connected Instances at dispatch time is parked and will dispatch automatically once any Instance of that Agent reconnects.
 
