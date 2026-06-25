@@ -9,19 +9,26 @@ sidebar:
 
 An **Integration Event** is the demand side of the [Integration]({{< relref "resources/integration" >}}) model. It subscribes a trigger on a scope to a target integration, with an optional message template and filter. A notification is delivered only when **both** an Integration Event exists **and** the target integration is [supplied]({{< relref "resources/integration#supply" >}}) to the scope.
 
-## Integration Event
+## Per-scope resources
+
+Each scope has its own resource type:
+
+| Resource | Scope | Scope field |
+|----------|-------|-------------|
+| [`snapcd_organization_integration_event`](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/organization_integration_event) | Organization | _(none)_ |
+| [`snapcd_stack_integration_event`](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/stack_integration_event) | Stack | `stack_id` |
+| [`snapcd_namespace_integration_event`](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/namespace_integration_event) | Namespace | `namespace_id` |
+| [`snapcd_module_integration_event`](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/module_integration_event) | Module | `module_id` |
+
+All share these common fields:
 
 | Field | Description |
 |-------|-------------|
-| `scope` | `Organization`, `Stack`, `Namespace`, or `Module` |
-| `scope_id` | Id of the stack/namespace/module (omit for `Organization`) |
 | `integration_id` | Target integration |
 | `trigger` | What to fire on (see [trigger catalog](#trigger-catalog)) |
 | `template` | Optional message template; omit for the built-in default |
 | `filter` | Optional filter expression |
 | `is_disabled` | When `true`, the subscription is inert |
-
-Full specification: [`snapcd_integration_event`](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/integration_event).
 
 ## Trigger catalog
 

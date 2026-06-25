@@ -56,9 +56,9 @@ Before an integration can be notified for a Module, it must be **supplied** to t
 | Method | Description |
 |--------|-------------|
 | `is_supplied_to_all_modules` on the Integration | Serves every module in the org |
-| `snapcd_integration_supply` (scope = Stack) | Serves every module under the stack |
-| `snapcd_integration_supply` (scope = Namespace) | Serves every module in the namespace |
-| `snapcd_integration_supply` (scope = Module) | Serves that single module |
+| `snapcd_integration_stack_supply` | Serves every module under the stack |
+| `snapcd_integration_namespace_supply` | Serves every module in the namespace |
+| `snapcd_integration_module_supply` | Serves that single module |
 
 There is deliberately no organization-scope supply — org-wide supply is the flag.
 
