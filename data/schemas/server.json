@@ -461,6 +461,27 @@
         "SeedLicenseToken": {
           "type": "boolean",
           "description": "When true, seeds a debug-signed Enterprise license token onto the preseeded organization so debug runs can skip the paste-opaque-key flow. Defaults to false."
+        },
+        "SlackIntegration": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "BotToken": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "DefaultChannel": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "description": "Optional Slack credentials for the debug integration. When set, the seeded debug-slack integration uses these real credentials so the test bench delivers to an actual Slack workspace."
         }
       },
       "description": "Debug-time data seeder for the Server. Runs on startup only when the Server is built with the Development environment; lets a developer pre-populate a fresh database with Service Principals, Users, Stacks, Runners, and an Enterprise license token without going through the Dashboard\u0027s usual setup flow. Never runs in non-Development environments."
@@ -1538,6 +1559,98 @@
           },
           "description": "Per-GroupStackRoleAssignment repository tuning. Almost always left at defaults \u2014 operators override only when they need to opt out of bus events or change the event TTL for the GroupStackRoleAssignment entity specifically."
         },
+        "IntegrationEvent": {
+          "type": "object",
+          "properties": {
+            "EmitCreateEvents": {
+              "type": "boolean",
+              "default": true
+            },
+            "EmitUpdateEvents": {
+              "type": "boolean",
+              "default": true
+            },
+            "EmitDeleteEvents": {
+              "type": "boolean",
+              "default": true
+            },
+            "EventTtl": {
+              "$comment": "Represents a System.TimeSpan value.",
+              "type": "string",
+              "pattern": "^-?(\\d\u002B\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$"
+            }
+          },
+          "description": "Shared tuning for the four scoped integration-event repositories."
+        },
+        "Integration": {
+          "type": "object",
+          "properties": {
+            "EmitCreateEvents": {
+              "type": "boolean",
+              "default": true
+            },
+            "EmitUpdateEvents": {
+              "type": "boolean",
+              "default": true
+            },
+            "EmitDeleteEvents": {
+              "type": "boolean",
+              "default": true
+            },
+            "EventTtl": {
+              "$comment": "Represents a System.TimeSpan value.",
+              "type": "string",
+              "pattern": "^-?(\\d\u002B\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$"
+            }
+          },
+          "description": "Per-Integration repository tuning. The CRUD events drive the fanout cache-invalidation consumer, so leaving these at their defaults is expected; operators override only to change event TTL."
+        },
+        "IntegrationRoleAssignment": {
+          "type": "object",
+          "properties": {
+            "EmitCreateEvents": {
+              "type": "boolean",
+              "default": true
+            },
+            "EmitUpdateEvents": {
+              "type": "boolean",
+              "default": true
+            },
+            "EmitDeleteEvents": {
+              "type": "boolean",
+              "default": true
+            },
+            "EventTtl": {
+              "$comment": "Represents a System.TimeSpan value.",
+              "type": "string",
+              "pattern": "^-?(\\d\u002B\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$"
+            }
+          },
+          "description": "Shared tuning for the integration role-assignment repositories (base \u002B per-principal)."
+        },
+        "IntegrationSupply": {
+          "type": "object",
+          "properties": {
+            "EmitCreateEvents": {
+              "type": "boolean",
+              "default": true
+            },
+            "EmitUpdateEvents": {
+              "type": "boolean",
+              "default": true
+            },
+            "EmitDeleteEvents": {
+              "type": "boolean",
+              "default": true
+            },
+            "EventTtl": {
+              "$comment": "Represents a System.TimeSpan value.",
+              "type": "string",
+              "pattern": "^-?(\\d\u002B\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$"
+            }
+          },
+          "description": "Shared tuning for the three integration supply-assignment repositories."
+        },
         "ModuleExtraFile": {
           "type": "object",
           "properties": {
@@ -1807,6 +1920,60 @@
             }
           },
           "description": "Per-ModuleJobApproval repository tuning. Almost always left at defaults \u2014 operators override only when they need to opt out of bus events or change the event TTL for the ModuleJobApproval entity specifically."
+        },
+        "ModuleJobMissionRunMilestone": {
+          "type": "object",
+          "properties": {
+            "EmitCreateEvents": {
+              "type": "boolean",
+              "description": "When true (default), publish a CreatedEvent on the bus when a milestone is created.",
+              "default": true
+            },
+            "EmitUpdateEvents": {
+              "type": "boolean",
+              "description": "When true (default), publish an UpdatedEvent on the bus when a milestone is updated.",
+              "default": true
+            },
+            "EmitDeleteEvents": {
+              "type": "boolean",
+              "description": "When true (default), publish a DeletedEvent on the bus when a milestone is deleted.",
+              "default": true
+            },
+            "EventTtl": {
+              "$comment": "Represents a System.TimeSpan value.",
+              "type": "string",
+              "pattern": "^-?(\\d\u002B\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$",
+              "description": "Time-to-live for emitted events from this entity. Defaults to 30 minutes."
+            }
+          },
+          "description": "Per-ModuleJobMissionRunMilestone repository tuning. Almost always left at defaults \u2014 operators override only when they need to opt out of bus events or change the event TTL for this entity specifically."
+        },
+        "ModuleJobMissionRun": {
+          "type": "object",
+          "properties": {
+            "EmitCreateEvents": {
+              "type": "boolean",
+              "description": "When true (default), publish a CreatedEvent on the bus when a run is created.",
+              "default": true
+            },
+            "EmitUpdateEvents": {
+              "type": "boolean",
+              "description": "When true (default), publish an UpdatedEvent on the bus when a run is updated. Overridable per environment via config ( Repositories:ModuleJobMissionRun ). The hub additionally suppresses it per-call (SuppressEvents) for the high-frequency streamed log-append update, where a per-batch event would be noise.",
+              "default": true
+            },
+            "EmitDeleteEvents": {
+              "type": "boolean",
+              "description": "When true (default), publish a DeletedEvent on the bus when a run is deleted.",
+              "default": true
+            },
+            "EventTtl": {
+              "$comment": "Represents a System.TimeSpan value.",
+              "type": "string",
+              "pattern": "^-?(\\d\u002B\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$",
+              "description": "Time-to-live for emitted events from this entity. Defaults to 30 minutes."
+            }
+          },
+          "description": "Per-ModuleJobMissionRun repository tuning. Almost always left at defaults \u2014 operators override only when they need to opt out of bus events or change the event TTL for this entity specifically."
         },
         "ModuleJob": {
           "type": "object",

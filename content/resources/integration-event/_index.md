@@ -27,8 +27,10 @@ Full specification: [`snapcd_integration_event`](https://registry.terraform.io/p
 
 | Group | Triggers |
 |-------|----------|
-| Job lifecycle | `JobSucceeded`, `JobFailed`, `JobAwaitingApproval`, `JobApproved`, `JobDeclined`, `JobCancelled` |
-| Mission | `MissionStarted`, `MissionMilestoneReported`, `MissionCompleted`, `MissionFaulted` |
+| Job lifecycle | `JobSucceeded`, `JobFailed`, `JobAwaitingApproval`, `JobCancelled` |
+| Mission | `MissionMilestoneReported` |
+
+`JobApproved` and `JobDeclined` are defined in the enum but not yet wired to a consumer.
 
 A mission's milestones for a single mission are threaded under one Slack message.
 
@@ -38,8 +40,10 @@ Templates use `{{ token }}` substitution (no code execution). Unknown tokens ren
 
 | Token | Available for |
 |-------|---------------|
-| `{{trigger}}`, `{{moduleName}}`, `{{moduleId}}`, `{{jobId}}`, `{{organizationId}}` | all |
+| `{{trigger}}`, `{{moduleName}}`, `{{moduleId}}`, `{{organizationId}}` | all |
+| `{{stackName}}`, `{{namespaceName}}` | all |
+| `{{jobId}}`, `{{jobUrl}}` | job and milestone triggers |
 | `{{jobType}}` | job triggers (`Apply` / `Destroy`) |
 | `{{missionType}}`, `{{kind}}`, `{{message}}` | mission triggers |
 
-Example: `❌ {{jobType}} failed on *{{moduleName}}* (job {{jobId}}).`
+Example: `❌ {{jobType}} failed on *{{moduleName}}* ({{stackName}}/{{namespaceName}})\n{{jobUrl}}`

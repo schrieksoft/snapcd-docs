@@ -1,6 +1,6 @@
 ---
 title: Missions
-weight: 4
+weight: 6
 sidebar:
   open: false
 ---

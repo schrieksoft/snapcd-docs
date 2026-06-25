@@ -1,6 +1,6 @@
 ---
 title: Secrets
-weight: 7
+weight: 9
 sidebar:
   open: false
 ---

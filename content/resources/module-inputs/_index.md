@@ -1,6 +1,6 @@
 ---
 title: Module Inputs
-weight: 6
+weight: 8
 sidebar:
   open: false
 ---
