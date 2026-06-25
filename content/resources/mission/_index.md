@@ -18,6 +18,7 @@ The set of Mission Types is fixed. Each type is bound to a triggering Snap CD ev
 | `AutoDiagnose` | Module Job fails | Posts a diagnosis of the failure (root cause hypothesis, relevant log excerpts, suggested next steps) |
 | `ApprovalRecommend` | Module Job reaches approval-required state | Posts a recommendation on whether to approve the plan, based on the plan output and the Module's history |
 | `SummarizeJob` | Module Job succeeds | Posts a plain-language summary of what the Job changed |
+| `AutoFix` | Module Job fails | Attempts an automated fix based on the failure diagnosis, then retries the Job |
 
 ## Mission Resources
 
@@ -35,7 +36,7 @@ Each Mission resource carries the same configuration fields, plus the scope refe
 | Field | Description |
 |-------|-------------|
 | `agent_id` | The Agent that runs this Mission |
-| `mission_type` | One of `AutoDiagnose`, `ApprovalRecommend`, `SummarizeJob` |
+| `mission_type` | One of `AutoDiagnose`, `ApprovalRecommend`, `SummarizeJob`, `AutoFix` |
 | `sidecar_name` | Optional. Selects which Sidecar on the Agent handles this Mission. When unset, the Agent's default Sidecar is used |
 | `is_disabled` | When `true`, the Mission is registered but will not be dispatched |
 

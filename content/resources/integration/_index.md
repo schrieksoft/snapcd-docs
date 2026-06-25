@@ -12,7 +12,7 @@ An **Integration** sends SnapCd events — job lifecycle transitions and [Missio
 Whether a given event reaches a given integration is decided by a **supply ∩ demand** model (the same shape used for Agents and Missions):
 
 - **Supply** — which scopes an integration *serves* (supplies, or the org-wide flag).
-- **Demand** — which trigger on which scope *should* notify an integration (an **Integration Event**).
+- **Demand** — which trigger on which scope *should* notify an integration (an [Integration Event]({{< relref "resources/integration-event" >}})).
 
 A notification is delivered only when **both** hold: an Integration Event subscribes a trigger→integration on a scope, **and** that integration is supplied to that scope.
 
@@ -61,43 +61,6 @@ Before an integration can be notified for a Module, it must be **supplied** to t
 | `snapcd_integration_supply` (scope = Module) | Serves that single module |
 
 There is deliberately no organization-scope supply — org-wide supply is the flag.
-
-## Demand — Integration Events
-
-An **Integration Event** subscribes a [trigger](#trigger-catalog) on a scope to a target integration, with an optional message template and filter.
-
-| Field | Description |
-|-------|-------------|
-| `scope` | `Organization`, `Stack`, `Namespace`, or `Module` |
-| `scope_id` | Id of the stack/namespace/module (omit for `Organization`) |
-| `integration_id` | Target integration |
-| `trigger` | What to fire on (see catalog) |
-| `template` | Optional message template; omit for the built-in default |
-| `filter` | Optional filter expression |
-| `is_disabled` | When `true`, the subscription is inert |
-
-Full specification: [`snapcd_integration_event`](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/integration_event).
-
-### Trigger catalog
-
-| Group | Triggers |
-|-------|----------|
-| Job lifecycle | `JobSucceeded`, `JobFailed`, `JobAwaitingApproval`, `JobApproved`, `JobDeclined`, `JobCancelled` |
-| Mission | `MissionStarted`, `MissionMilestoneReported`, `MissionCompleted`, `MissionFaulted` |
-
-A mission's milestones for a single mission are threaded under one Slack message.
-
-### Templates
-
-Templates use `{{ token }}` substitution (no code execution). Unknown tokens render empty; omit `template` to use the built-in default for the trigger.
-
-| Token | Available for |
-|-------|---------------|
-| `{{trigger}}`, `{{moduleName}}`, `{{moduleId}}`, `{{jobId}}`, `{{organizationId}}` | all |
-| `{{jobType}}` | job triggers (`Apply` / `Destroy`) |
-| `{{missionType}}`, `{{kind}}`, `{{message}}` | mission triggers |
-
-Example: `❌ {{jobType}} failed on *{{moduleName}}* (job {{jobId}}).`
 
 ## Access control (RBAC)
 
