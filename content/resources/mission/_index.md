@@ -1,6 +1,6 @@
 ---
 title: Missions
-weight: 4
+weight: 6
 sidebar:
   open: false
 ---
@@ -18,6 +18,7 @@ The set of Mission Types is fixed. Each type is bound to a triggering Snap CD ev
 | `AutoDiagnose` | Module Job fails | Posts a diagnosis of the failure (root cause hypothesis, relevant log excerpts, suggested next steps) |
 | `ApprovalRecommend` | Module Job reaches approval-required state | Posts a recommendation on whether to approve the plan, based on the plan output and the Module's history |
 | `SummarizeJob` | Module Job succeeds | Posts a plain-language summary of what the Job changed |
+| `AutoFix` | Module Job fails | Attempts an automated fix based on the failure diagnosis, then retries the Job |
 
 ## Mission Resources
 
@@ -35,15 +36,15 @@ Each Mission resource carries the same configuration fields, plus the scope refe
 | Field | Description |
 |-------|-------------|
 | `agent_id` | The Agent that runs this Mission |
-| `mission_type` | One of `AutoDiagnose`, `ApprovalRecommend`, `SummarizeJob` |
+| `mission_type` | One of `AutoDiagnose`, `ApprovalRecommend`, `SummarizeJob`, `AutoFix` |
 | `sidecar_name` | Optional. Selects which Sidecar on the Agent handles this Mission. When unset, the Agent's default Sidecar is used |
 | `is_disabled` | When `true`, the Mission is registered but will not be dispatched |
 
 ## Dispatch
 
-When a triggering event occurs, Snap CD evaluates the active set of Mission rows that cover the affected Module Job. For each match, Snap CD checks that the named Agent has an Agent Assignment covering the Module (or has `is_assigned_to_all_modules` set), then dispatches the Mission directly to a connected Agent Instance.
+When a triggering event occurs, Snap CD evaluates the active set of Mission rows that cover the affected Module Job. For each match, Snap CD checks that the named Agent has an Agent Supply covering the Module (or has `is_supplied_to_all_modules` set), then dispatches the Mission directly to a connected Agent Instance.
 
-A Mission whose Agent is online but lacks an assignment covering the Module is parked and will dispatch automatically once a covering assignment is added (or once the Agent's `is_assigned_to_all_modules` flag is enabled).
+A Mission whose Agent is online but lacks a supply covering the Module is parked and will dispatch automatically once a covering supply is added (or once the Agent's `is_supplied_to_all_modules` flag is enabled).
 
 A Mission whose Agent has no connected Instances at dispatch time is parked and will dispatch automatically once any Instance of that Agent reconnects.
 

@@ -9,7 +9,7 @@ sidebar:
 
 The **Runner** is the self-hosted process that executes the work the [Server]({{< relref "components/server" >}}) hands out. When a [Module]({{< relref "resources/stack-namespace-module#module" >}}) [Job]({{< relref "how-it-works/orchestration" >}}) is dispatched, a Runner picks it up over its SignalR connection, fetches the Module source, materialises [Inputs]({{< relref "resources/module-inputs" >}}) and [Extra Files]({{< relref "resources/extra-files" >}}) into the working directory, executes the configured [engine]({{< relref "resources/engine" >}}) commands (`init`, `plan`, `apply`, `destroy`, `output`), streams logs back to the Server in real time, and reports the final status.
 
-The Runner is where credentials with real blast radius live: cloud provider keys, Kubernetes service accounts, on-prem API tokens. By deploying Runners with narrowly scoped permissions and binding Modules to them via [Runner Assignments]({{< relref "resources/runner#allowing-a-module-to-use-a-runner" >}}), you control which Modules can act on which infrastructure. The Server itself never holds these credentials.
+The Runner is where credentials with real blast radius live: cloud provider keys, Kubernetes service accounts, on-prem API tokens. By deploying Runners with narrowly scoped permissions and binding Modules to them via [Runner Supplies]({{< relref "resources/runner#allowing-a-module-to-use-a-runner" >}}), you control which Modules can act on which infrastructure. The Server itself never holds these credentials.
 
 The Runner is bundled with Snap CD in both editions and is not license-gated — Cloud-edition customers run their own Runners against `snapcd.io`, and Self-Hosted customers run them against their own Server.
 
@@ -21,7 +21,7 @@ The following resources must exist on the Server before a Runner can connect and
 |----------|-------|
 | [Service Principal]({{< relref "resources/identity-access-management#service-principal" >}}) | The identity the Runner authenticates as. The Runner uses its `ClientId` and `ClientSecret` to obtain JWTs from `/connect/token` |
 | [Runner record]({{< relref "resources/runner" >}}) | The Runner binds to this record. Its `Id` is what the Runner reports via `Runner.Id`, and its `ServicePrincipalId` must reference the Service Principal above |
-| [Runner Assignment]({{< relref "resources/runner#allowing-a-module-to-use-a-runner" >}}) | At least one, covering every Module the Runner is to handle. Created at Stack / Namespace / Module scope, or shortcut via `is_assigned_to_all_modules` on the Runner record |
+| [Runner Supply]({{< relref "resources/runner#allowing-a-module-to-use-a-runner" >}}) | At least one, covering every Module the Runner is to handle. Created at Stack / Namespace / Module scope, or shortcut via `is_supplied_to_all_modules` on the Runner record |
 
 ## Other Prerequisites
 

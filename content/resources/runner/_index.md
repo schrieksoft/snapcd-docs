@@ -17,7 +17,7 @@ A **Runner** defines the configuration for job execution, including which [Servi
 |-------|-------------|
 | `name` | Unique name of the Runner |
 | `service_principal_id` | ID of the Service Principal used by connected Runners to authenticate |
-| `is_assigned_to_all_modules` | When `true`, any Module can use this Runner |
+| `is_supplied_to_all_modules` | When `true`, any Module can use this Runner |
 | `is_disabled` | When `true`, the Runner will not accept new Jobs |
 | `allow_multiple_instances` | When `true`, multiple Runner processes can connect against this record simultaneously |
 
@@ -41,14 +41,14 @@ You can set the `runner_instance_name` field on a **Module** to always use a Run
 
 ## Allowing a Module to use a Runner
 
-Before a **Module** can submit Jobs to a **Runner**, an assignment must exist. Assignments can be configured at different scopes:
+Before a **Module** can submit Jobs to a **Runner**, a supply must exist. Supplies can be configured at different scopes:
 
 | Method | Description |
 |--------|-------------|
-| `is_assigned_to_all_modules` on Runner | Allows any Module to use this Runner |
-| [Runner Stack Assignment](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/runner_stack_assignment) | All Modules within the Stack can use the Runner |
-| [Runner Namespace Assignment](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/runner_namespace_assignment) | All Modules within the Namespace can use the Runner |
-| [Runner Module Assignment](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/runner_module_assignment) | Only the specified Module can use the Runner |
+| `is_supplied_to_all_modules` on Runner | Allows any Module to use this Runner |
+| [Runner Stack Supply](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/runner_stack_supply) | All Modules within the Stack can use the Runner |
+| [Runner Namespace Supply](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/runner_namespace_supply) | All Modules within the Namespace can use the Runner |
+| [Runner Module Supply](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/runner_module_supply) | Only the specified Module can use the Runner |
 
 ## Security Model
 

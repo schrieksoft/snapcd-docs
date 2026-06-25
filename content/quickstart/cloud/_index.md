@@ -46,7 +46,7 @@ Then configure the provider like [this](https://registry.terraform.io/providers/
 To register a [Runner]({{< relref "components/runner" >}}) you must:
 
 1. Create a **Service Principal**. You may do this via the portal at [snapcd.io/ServicePrincipals](https://snapcd.io/ServicePrincipals). Pick a unique (within your organization) "Client ID" and set a "Client Secret". This **Service Principal** does not need any additional role assignments.
-2. Create a **Runner** by associating your **Service Principal**. This can be done via the portal at [snapcd.io/Runners](https://snapcd.io/Runners). Make the Runner available to [Modules]({{< relref "resources/stack-namespace-module#module" >}}) within your organization by setting the `is_assigned_to_all_modules` flag to `true`. More granular assignment approaches are discussed [here]({{< relref "resources/runner#allowing-a-module-to-use-a-runner" >}}).
+2. Create a **Runner** by associating your **Service Principal**. This can be done via the portal at [snapcd.io/Runners](https://snapcd.io/Runners). Make the Runner available to [Modules]({{< relref "resources/stack-namespace-module#module" >}}) within your organization by setting the `is_supplied_to_all_modules` flag to `true`. More granular supply approaches are discussed [here]({{< relref "resources/runner#allowing-a-module-to-use-a-runner" >}}).
 
 ## Deploy a Runner
 

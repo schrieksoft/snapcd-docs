@@ -26,7 +26,7 @@ The following resources must exist on the Server before an Agent can connect and
 | [Service Principal]({{< relref "resources/identity-access-management#service-principal" >}}) | The identity the Agent authenticates as. The Agent uses its `ClientId` and `ClientSecret` to obtain JWTs from `/connect/token` |
 | [Agent record]({{< relref "resources/agent" >}}) | The Agent binds to this record. Its `Id` is what the Agent reports via `Agent.Id`, and its `ServicePrincipalId` must reference the Service Principal above |
 | [Operational role assignments]({{< relref "resources/identity-access-management" >}}) on the Service Principal | The Service Principal needs the role grants its configured Missions require — typically `OrganizationRole.Reader`, plus `JobManager` if any Mission needs to record approval decisions |
-| [Agent Assignment]({{< relref "resources/agent#allowing-an-agent-to-serve-a-module" >}}) | At least one, covering every Module the Agent is to serve. Created at Stack / Namespace / Module scope, or shortcut via `is_assigned_to_all_modules` on the Agent record |
+| [Agent Supply]({{< relref "resources/agent#allowing-an-agent-to-serve-a-module" >}}) | At least one, covering every Module the Agent is to serve. Created at Stack / Namespace / Module scope, or shortcut via `is_supplied_to_all_modules` on the Agent record |
 | [Mission]({{< relref "resources/mission" >}}) | At least one Mission at some scope covering the target Modules. Until one exists, the Agent will connect but receive no work |
 
 ## Other Prerequisites
@@ -55,7 +55,7 @@ The hub validates the connect attempt against three things at once: the JWT's `a
 
 ### Reconnect, parking and outages
 
-The SignalR client reconnects automatically. While disconnected, the Server treats Missions that match this Agent as **parked** rather than failed — a parked Mission resumes dispatch as soon as any Instance of the Agent reconnects. The Server also parks Missions when an Agent is online but lacks an Agent Assignment covering the Module; those dispatch automatically once a covering assignment is added.
+The SignalR client reconnects automatically. While disconnected, the Server treats Missions that match this Agent as **parked** rather than failed — a parked Mission resumes dispatch as soon as any Instance of the Agent reconnects. The Server also parks Missions when an Agent is online but lacks an Agent Supply covering the Module; those dispatch automatically once a covering supply is added.
 
 ### Multiple instances
 

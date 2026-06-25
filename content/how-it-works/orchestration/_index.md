@@ -67,7 +67,7 @@ An "upstream output change" is triggered when a new **OutputSet** is created on 
 
 A "source change" occurs when the source code that the **Module** definition refers to has been updated with a new revision (e.g. new commit or new semantic version). This is a "polling" approach, meaning that on a specific schedule, Snap CD will query the defined sources for their latest definitive revision (typically a commit SHA). If the resulting definitive revision differs from the one that was used in the most recent **Job**, a new one will be triggered.
 
-The [Server]({{< relref "components/server" >}}) is responsible for scheduling the tasks to determine the most recent definitive revision, but the actual query is done by the [Runners]({{< relref "components/runner" >}}). You can specify which **Runner** should be used for which **Source Url** by creating a **Source Refresh Assignment** resource. If you do not specify this, then a random **Runner** from a **Module** that references that specific source will be selected.
+The [Server]({{< relref "components/server" >}}) is responsible for scheduling the tasks to determine the most recent definitive revision, but the actual query is done by the [Runners]({{< relref "components/runner" >}}). You can specify which **Runner** should be used for which **Source Url** by creating a **Source Refresher Preselection** resource. If you do not specify this, then a random **Runner** from a **Module** that references that specific source will be selected.
 
 The defitive revision is determined by the **Runner** in one for the following manners.
 

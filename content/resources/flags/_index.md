@@ -1,6 +1,6 @@
 ---
 title: Flags & Array Flags
-weight: 9
+weight: 11
 sidebar:
   open: false
 ---
