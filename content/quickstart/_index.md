@@ -12,4 +12,4 @@ Snap CD can be used in either of two editions:
 
 Both editions share the same Web API, [Terraform Provider](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs) and [Runner]({{< relref "components/runner" >}}). Pick whichever edition fits your situation; nothing in the resource model differs between them.
 
-If you're not sure which to choose, start on Cloud — you can always migrate to self-hosted later. See [Server]({{< relref "components/server" >}}) for the deployment guide, the licensing model, and the operational concerns of running your own Server.
+If you're not sure which to choose, start with Self-Hosted — the free Community Edition is easy to deploy and gives you full control. See [Server]({{< relref "components/server" >}}) for the deployment guide and licensing details.
