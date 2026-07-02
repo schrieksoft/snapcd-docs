@@ -65,10 +65,24 @@ Organization roles apply system-wide.
 | `Contributor` | Can read and create resources |
 | `Reader` | Read-only access across the organization |
 | `StackCreator` | Can create new Stacks |
+| `StackContributor` | Can contribute to all Stacks |
+| `StackReader` | Read-only access to all Stacks |
 | `IdentityAccessManager` | Can manage role assignments |
 | `JobManager` | Can manage job execution |
 | `SourceChangeNotifier` | Can trigger source change notifications |
-| `Runner` | Can execute jobs as a runner |
+| `SubscriptionManager` | Can manage the organization's subscription |
+| `RunnerCreator` | Can create new Runners |
+| `RunnerContributor` | Can contribute to all Runners |
+| `RunnerReader` | Read-only access to all Runners |
+| `AgentCreator` | Can create new Agents |
+| `AgentContributor` | Can contribute to all Agents |
+| `AgentReader` | Read-only access to all Agents |
+| `IntegrationCreator` | Can create new Integrations |
+| `IntegrationContributor` | Can contribute to all Integrations |
+| `IntegrationReader` | Read-only access to all Integrations |
+| `SourceRefresherPreselectionCreator` | Can create source refresher preselections |
+| `SourceRefresherPreselectionContributor` | Can contribute to source refresher preselections |
+| `SourceRefresherPreselectionReader` | Read-only access to source refresher preselections |
 
 ## Stack Roles
 
@@ -87,7 +101,6 @@ Stack roles apply to a specific Stack and its child Namespaces and Modules.
 | `IdentityAccessManager` | Can manage role assignments on the Stack |
 | `SourceChangeNotifier` | Can trigger source change notifications |
 | `JobManager` | Can manage job execution |
-| `Runner` | Can execute jobs as a runner |
 
 ## Namespace Roles
 
@@ -106,7 +119,6 @@ Namespace roles apply to a specific Namespace and its child Modules.
 | `IdentityAccessManager` | Can manage role assignments on the Namespace |
 | `SourceChangeNotifier` | Can trigger source change notifications |
 | `JobManager` | Can manage job execution |
-| `Runner` | Can execute jobs as a runner |
 
 ## Module Roles
 
@@ -123,7 +135,6 @@ Module roles apply to a specific Module.
 | `Reader` | Read-only access to the Module |
 | `IdentityAccessManager` | Can manage role assignments on the Module |
 | `SourceChangeNotifier` | Can trigger source change notifications |
-| `Runner` | Can execute jobs as a runner |
 | `JobManager` | Can manage job execution |
 
 ## Runner Roles
@@ -140,6 +151,36 @@ Runner roles apply to a specific Runner.
 | `Contributor` | Can read and modify the Runner |
 | `Reader` | Read-only access to the Runner |
 | `IdentityAccessManager` | Can manage role assignments on the Runner |
+
+## Agent Roles
+
+Agent roles apply to a specific Agent.
+
+**Terraform Resource:** [snapcd_agent_role_assignment](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/agent_role_assignment)
+
+**Additional Field:** `agent_id` - ID of the Agent
+
+| Role | Description |
+|------|-------------|
+| `Owner` | Full control over the Agent |
+| `Contributor` | Can read and modify the Agent |
+| `Reader` | Read-only access to the Agent |
+| `IdentityAccessManager` | Can manage role assignments on the Agent |
+
+## Integration Roles
+
+Integration roles apply to a specific Integration.
+
+**Terraform Resource:** [snapcd_integration_role_assignment](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/integration_role_assignment)
+
+**Additional Field:** `integration_id` - ID of the Integration
+
+| Role | Description |
+|------|-------------|
+| `Owner` | Full control over the Integration |
+| `Contributor` | Can read and modify the Integration |
+| `Reader` | Read-only access to the Integration |
+| `IdentityAccessManager` | Can manage role assignments on the Integration |
 
 # Examples
 
