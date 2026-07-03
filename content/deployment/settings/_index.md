@@ -19,7 +19,7 @@ Settings are resolved in ascending priority. Later layers override earlier ones:
 4. Command-line arguments — `--Runner:Credentials:ClientSecret=…`
 5. **External Settings provider** — loads values from external secret stores into a `Data` map at startup; see below
 
-All five layers describe the same nested-section tree. When this page or the [component pages]({{< relref "components" >}}) refers to a setting in prose, the form used is the nested-JSON path (e.g. `Runner.Credentials.ClientSecret` means the `ClientSecret` value inside the `Credentials` object inside the `Runner` object). Translate to the form your layer needs: nested JSON in `appsettings.json`, `__`-separated for env vars, `:`-separated for command-line arguments and External Settings provider `Data` keys.
+All five layers describe the same nested-section tree. When this page or the [component pages]({{< relref "components" >}}) refers to a setting in prose, the form used is the nested-JSON path (e.g. `Runner.Credentials.ClientSecret` means the `ClientSecret` value inside the `Credentials` object inside the `Runner` object). Translate to the form your layer needs: nested JSON in `appsettings.json` and External Settings provider `Data` sections, `__`-separated for env vars, `:`-separated for command-line arguments.
 
 ## External Settings provider
 
@@ -35,7 +35,11 @@ The provider is configured via a separate `appsettings.External.json` file. The 
       "Configuration": { "VaultUrl": "https://my-vault.vault.azure.net" },
       "Data": {
         "ConnectionString": "snapcd-db-conn",
-        "EmailSender:SendGrid:ApiKey": "sendgrid-key/d023e916822d4dc18c03e924cdc7c285"
+        "EmailSender": {
+          "SendGrid": {
+            "ApiKey": "sendgrid-key/d023e916822d4dc18c03e924cdc7c285"
+          }
+        }
       }
     }
   ]
@@ -48,7 +52,7 @@ Per-provider fields:
 |-------|---------|
 | `Loader` | Name of the loader type. Supported values: `AzureKeyVault`, `AmazonSecretsManager`, `Literal` |
 | `Configuration` | Per-loader connection settings (e.g. vault URL, AWS region) |
-| `Data` | Mapping of Snap CD setting paths to source-key references. Each entry's **key** is the dotted path the value lands at in the configuration pipeline; the **value** is the name of the secret in the external source |
+| `Data` | Mapping of Snap CD settings to source-key references, using nested JSON objects to represent the configuration hierarchy. Leaf values are the names of secrets in the external source |
 
 The provider sits at the top of the configuration priority list, so any value it resolves overrides whatever was present in `appsettings.json`, environment variables, or command-line arguments.
 
@@ -64,7 +68,11 @@ Resolves keys from an Azure Key Vault using `DefaultAzureCredential` (managed id
   "Configuration": { "VaultUrl": "https://my-vault.vault.azure.net" },
   "Data": {
     "ConnectionString": "snapcd-db-conn",
-    "Runner:Credentials:ClientSecret": "runner-sp-secret"
+    "Runner": {
+      "Credentials": {
+        "ClientSecret": "runner-sp-secret"
+      }
+    }
   }
 }
 ```
@@ -85,7 +93,11 @@ Resolves keys from AWS Secrets Manager. Authentication follows the standard AWS 
   "Configuration": { "Region": "eu-west-1" },
   "Data": {
     "ConnectionString": "prod/snapcd/db-conn",
-    "Runner:Credentials:ClientSecret": "prod/snapcd/runner-sp"
+    "Runner": {
+      "Credentials": {
+        "ClientSecret": "prod/snapcd/runner-sp"
+      }
+    }
   }
 }
 ```
@@ -103,7 +115,11 @@ Reads each `Data` value verbatim — no external lookup. Useful for composing mu
   "Loader": "Literal",
   "Configuration": {},
   "Data": {
-    "Agent:Credentials:ClientSecret": "actual-secret-value-here"
+    "Agent": {
+      "Credentials": {
+        "ClientSecret": "actual-secret-value-here"
+      }
+    }
   }
 }
 ```
@@ -119,7 +135,9 @@ The `Providers` list is processed top to bottom, with later entries overriding e
       "Loader": "Literal",
       "Configuration": {},
       "Data": {
-        "Server:Host": "https://snapcd.example.com"
+        "Server": {
+          "Host": "https://snapcd.example.com"
+        }
       }
     },
     {
