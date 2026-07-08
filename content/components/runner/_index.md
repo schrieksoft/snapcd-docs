@@ -80,6 +80,21 @@ The Runner has no built-in dashboard. Operator-facing visibility is the Server's
 
 For the Runner host itself, treat it as a standard container workload: stdout to your log aggregator, container metrics to your usual collector.
 
+## Runner Environment Variables
+
+The `RunnerEnvVars` section in the Runner's `appsettings.json` defines environment variables that are injected into every engine process the Runner executes. These are merged with any environment variables resolved by the Server (e.g. from [Module Inputs]({{< relref "resources/module-inputs" >}}) or [Namespace Inputs]({{< relref "resources/namespace-inputs" >}}) with `input_kind = "EnvVar"`). When both sources define the same variable, the server-resolved value takes precedence.
+
+```json
+{
+  "RunnerEnvVars": {
+    "SNAPCD_CLIENT_ID": "default",
+    "SNAPCD_CLIENT_SECRET": "default"
+  }
+}
+```
+
+Use this for any environment variable that should be available to every engine process on this Runner — cloud credentials, feature flags, or authentication tokens. For example, the [State Store]({{< relref "resources/state-store" >}}) HTTP backend uses `SNAPCD_CLIENT_ID` and `SNAPCD_CLIENT_SECRET` from this section to authenticate against the State Store API.
+
 ## Settings
 
 The Runner reads its settings from the standard layered pipeline described in [Deployment > Settings]({{< relref "deployment/settings" >}}). Production deployments typically source `Runner.Credentials.ClientSecret` from a vault via the [External Settings provider]({{< relref "deployment/settings#external-settings-provider" >}}) rather than placing it in plain-text settings.
