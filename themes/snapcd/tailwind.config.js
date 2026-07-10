@@ -48,6 +48,10 @@ module.exports = {
       '5xl': '3rem',
       '6xl': '4rem'
     },
+    fontFamily: {
+      sans: ['"Geist Sans"', 'system-ui', 'sans-serif'],
+      mono: ['"Geist Mono"', 'ui-monospace', 'monospace'],
+    },
     letterSpacing: {
       tight: '-0.015em'
     },
@@ -79,7 +83,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        dark: '#111'
+        dark: '#000000'
       }
     }
   },
