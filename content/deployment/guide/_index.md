@@ -30,7 +30,7 @@ services:
   snapcd-server:
     image: ghcr.io/schrieksoft/snapcd/snapcd-server:latest
     ports:
-      - "8080:8080"
+      - "5000:5000"
     environment:
       - ConnectionString=Server=sqlserver,1433;Database=SnapCd;User Id=sa;Password=...;TrustServerCertificate=True
       - AllowHttp=false
