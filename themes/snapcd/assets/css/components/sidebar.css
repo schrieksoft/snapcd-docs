@@ -19,3 +19,19 @@
     @apply hx-rotate-90;
   }
 }
+
+/* Active page highlight — matched to the snapcd app's NavMenu: a 3px ember accent
+   bar on the left of the active item. Hextra's own subtle primary-tint background
+   and bold accent text are kept (they already flip correctly between light and dark);
+   this only adds the accent bar the app is known for. The negative padding-left
+   compensates for the border so the label doesn't shift, and the left corners are
+   squared so the bar reads as a full-height rule. The bar colour is the theme's
+   primary (ember), built from the same HSL triple in styles.css — not a hardcoded hex. */
+.sidebar-container .sidebar-active-item {
+  border-left: 3px solid hsl(var(--primary-hue) var(--primary-saturation) var(--primary-lightness)) !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  /* Hextra applies hx-px-2 (0.5rem); subtract the 3px bar on the left. */
+  padding-left: calc(0.5rem - 3px) !important;
+}
+

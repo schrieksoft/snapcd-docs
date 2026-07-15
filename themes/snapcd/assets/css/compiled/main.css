@@ -2461,6 +2461,20 @@ article details > summary::before {
   --tw-rotate: 90deg;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
+/* Active page highlight — matched to the snapcd app's NavMenu: a 3px ember accent
+   bar on the left of the active item. Hextra's own subtle primary-tint background
+   and bold accent text are kept (they already flip correctly between light and dark);
+   this only adds the accent bar the app is known for. The negative padding-left
+   compensates for the border so the label doesn't shift, and the left corners are
+   squared so the bar reads as a full-height rule. The bar colour is the theme's
+   primary (ember), built from the same HSL triple in styles.css — not a hardcoded hex. */
+.sidebar-container .sidebar-active-item {
+  border-left: 3px solid hsl(var(--primary-hue) var(--primary-saturation) var(--primary-lightness)) !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  /* Hextra applies hx-px-2 (0.5rem); subtract the 3px bar on the left. */
+  padding-left: calc(0.5rem - 3px) !important;
+}
 nav .search-wrapper {
   display: none;
 }
@@ -3231,6 +3245,10 @@ body:is(html[class~="dark"] *) {
 .dark\:hover\:hx-text-gray-200:hover:is(html[class~="dark"] *) {
   --tw-text-opacity: 1;
   color: rgb(229 231 235 / var(--tw-text-opacity));
+}
+.dark\:hover\:hx-text-gray-300:hover:is(html[class~="dark"] *) {
+  --tw-text-opacity: 1;
+  color: rgb(209 213 219 / var(--tw-text-opacity));
 }
 .dark\:hover\:hx-text-gray-50:hover:is(html[class~="dark"] *) {
   --tw-text-opacity: 1;
