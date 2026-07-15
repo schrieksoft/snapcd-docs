@@ -20,8 +20,24 @@ const makePrimaryColor =
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   prefix: 'hx-',
+  // Tailwind purges any utility class it cannot find in `content`, so this list
+  // has to cover every place a class can come from. Two sources, and both are
+  // needed:
+  //
+  //  1. hugo_stats.json — the classes Hugo actually emitted. Hugo writes it to
+  //     the root of the site being built, which is two levels up when
+  //     `npm run build:css` runs from this theme directory.
+  //
+  //  2. The layouts themselves. hugo_stats.json only records classes on pages
+  //     that were RENDERED, so a shortcode nobody has used yet (callout, icon,
+  //     hero-headline …) contributes nothing — and Tailwind purges its styles.
+  //     The first person to write {{< callout >}} in a doc would then get an
+  //     unstyled box. Scanning the templates directly means a class is kept
+  //     because it EXISTS in the markup, not because someone happened to use it.
   content: [
-    './**/hugo_stats.json',
+    '../../hugo_stats.json',   // the docs site (build:css runs from themes/snapcd)
+    './**/hugo_stats.json',    // the theme standalone (npm run dev:theme)
+    './layouts/**/*.html',     // latent markup: shortcodes/partials not yet used
   ],
   safelist: [
     'max-w-screen-xl',

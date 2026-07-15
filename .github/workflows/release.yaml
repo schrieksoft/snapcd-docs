@@ -56,6 +56,40 @@ jobs:
           hugo-version: '0.151.0'
           extended: true
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: themes/snapcd/package-lock.json
+
+      # Backstop. The compiled stylesheet is a committed build artifact, and it can
+      # drift from its source — commit 3c6126d changed the brand accent in
+      # styles.css but never rebuilt the artifact, so the site served a blue accent
+      # for weeks. The PR check (check-css.yaml) is the first line of defence; this
+      # stops a stale stylesheet from ever reaching production, including via a
+      # direct push to main or a manual dispatch.
+      - name: Fail if the committed stylesheet is stale
+        run: |
+          set -euo pipefail
+
+          css=themes/snapcd/assets/css/compiled/main.css
+
+          # Regenerate hugo_stats.json first: Tailwind purges against it, and
+          # --buildDrafts/--buildFuture ensure draft-only pages still contribute.
+          hugo --gc --buildDrafts --buildFuture --destination /tmp/hugo-out
+          npm --prefix themes/snapcd ci
+          npm --prefix themes/snapcd run build:css
+
+          if ! git diff --quiet -- "$css"; then
+            echo "::error file=$css::Refusing to deploy: the committed stylesheet does not match its source."
+            echo "::error::Rebuild it and commit the result — see the README."
+            git --no-pager diff --stat -- "$css"
+            exit 1
+          fi
+
+          echo "Committed stylesheet is up to date with its source."
+
       - name: Build site
         run: hugo --gc --minify
 
