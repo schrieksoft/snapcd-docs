@@ -12,6 +12,7 @@
 @import "components/hextra/feature-grid.css";
 @import "components/jupyter.css";
 @import "components/badge.css";
+@import "components/settings.css";
 
 html {
   @apply hx-text-base hx-antialiased;
@@ -23,16 +24,28 @@ body {
   @apply hx-w-full hx-bg-white dark:hx-bg-dark dark:hx-text-gray-100;
 }
 
+/* The brand accent is ember #E85D1A.
+ *
+ * Tailwind generates the whole `primary-*` scale from these three numbers (see
+ * `makePrimaryColor` in tailwind.config.js), and the theme paints ~50 things with
+ * it — links, buttons, active nav, borders, callouts. So this triple *is* the
+ * accent, and it has to resolve back to the brand colour exactly:
+ *
+ *     hsl(19.5deg 81.7% 50.6%) === #E85D1A
+ *
+ * 18deg/82%/50% resolves to #E85617 — close enough to look right, but not the
+ * brand colour.
+ */
 :root {
-  --primary-hue: 212deg;
-  --primary-saturation: 100%;
-  --primary-lightness: 50%;
+  --primary-hue: 19.5deg;
+  --primary-saturation: 81.7%;
+  --primary-lightness: 50.6%;
   --navbar-height: 4rem;
   --menu-height: 3.75rem;
 }
 
 .dark {
-  --primary-hue: 204deg;
-  --primary-saturation: 100%;
-  --primary-lightness: 50%;
+  --primary-hue: 19.5deg;
+  --primary-saturation: 81.7%;
+  --primary-lightness: 50.6%;
 }

@@ -1,0 +1,68 @@
+/* Settings reference ({{< settings >}} shortcode).
+ *
+ * The generated schema reference is a deep tree of <details> panels — the server
+ * schema alone has ~700 properties nested four levels deep. Rendered entirely in
+ * neutral grey it reads as an undifferentiated wall, so the accent does the
+ * structural work: it marks the disclosure arrows, the property names, and the
+ * left edge of every open panel.
+ *
+ * The accent is *stepped down the scale with depth* rather than applied flat.
+ * Painting 700 identical ember labels would make the accent stop meaning anything;
+ * fading it as you nest keeps the hierarchy legible while still tying every level
+ * to the brand.
+ */
+
+/* --- Disclosure arrows ----------------------------------------------------- */
+
+/* The base theme paints these with an inline SVG whose fill is currentColor, and
+ * then inverts it in dark mode — so they cannot simply be given a text colour.
+ * Override the image with an accent-filled copy and cancel the invert; the accent
+ * is legible on both light and dark surfaces. Keep the hex in sync with the
+ * --primary-* triple in styles.css (ember #E85D1A). */
+.settings-doc details > summary::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23E85D1A'%3E%3Cpath fill-rule='evenodd' d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z' clip-rule='evenodd' /%3E%3C/svg%3E") !important;
+  filter: none !important;   /* beats dark:before:hx-invert from the markup */
+}
+
+/* --- Property names -------------------------------------------------------- */
+
+/* Every level is accented, stepping down the primary scale as it nests. Depth is
+ * matched by chaining .settings-detail, which is how the partial nests the panels. */
+
+/* level 1 — the top-level settings sections */
+.settings-doc > .settings-detail > summary > code {
+  @apply hx-text-primary-600 dark:hx-text-primary-500;
+}
+
+/* level 2 */
+.settings-doc .settings-detail .settings-detail > summary > code {
+  @apply hx-text-primary-700 dark:hx-text-primary-400;
+}
+
+/* level 3 and deeper — softened furthest, so leaf properties stay quiet */
+.settings-doc .settings-detail .settings-detail .settings-detail > summary > code {
+  @apply hx-text-primary-800 dark:hx-text-primary-300;
+}
+
+/* --- Left edge on an open panel -------------------------------------------- */
+
+/* Ties an expanded body back to the heading it belongs to, at every level. The
+ * rule fades with depth for the same reason the labels do. */
+.settings-doc .settings-detail[open] {
+  @apply hx-border-l-2 hx-border-l-primary-500;
+}
+
+.settings-doc .settings-detail .settings-detail[open] {
+  @apply hx-border-l-primary-500/60;
+}
+
+.settings-doc .settings-detail .settings-detail .settings-detail[open] {
+  @apply hx-border-l-primary-500/40;
+}
+
+/* --- Misc ------------------------------------------------------------------ */
+
+/* The "additional keys →" marker on map-typed settings. */
+.settings-doc .settings-addl-arrow {
+  @apply hx-text-primary-600 dark:hx-text-primary-500;
+}

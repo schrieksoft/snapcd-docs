@@ -1,0 +1,93 @@
+name: Check compiled CSS
+
+# The stylesheet Hugo serves — themes/snapcd/assets/css/compiled/main.css — is a
+# build artifact that is committed to the repo. Nothing rebuilds it automatically,
+# so it can silently drift from its source: commit 3c6126d changed the brand accent
+# in styles.css from blue to orange but never rebuilt the artifact, and the site
+# went on serving a blue accent.
+#
+# This job rebuilds the stylesheet from source and fails if the committed file
+# differs. Editing any CSS therefore forces you to commit the rebuild alongside it.
+#
+# See the "Changing content vs. changing styling" section of the README.
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  check-css:
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # hugo.yaml has `enableGitInfo: true`; Hugo needs the full history.
+          fetch-depth: 0
+
+      - name: Setup Hugo (Extended)
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.151.0'
+          extended: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: themes/snapcd/package-lock.json
+
+      - name: Rebuild the stylesheet from source
+        run: |
+          set -euo pipefail
+
+          # Tailwind purges every class it cannot prove is used. It proves that from
+          # hugo_stats.json (the classes Hugo actually emitted) plus the layouts
+          # themselves, so the manifest has to be regenerated first. --buildDrafts
+          # and --buildFuture make sure pages that are only drafts still contribute.
+          hugo --gc --buildDrafts --buildFuture --destination /tmp/hugo-out
+
+          npm --prefix themes/snapcd ci
+          npm --prefix themes/snapcd run build:css
+
+      - name: Guard against a purged stylesheet
+        run: |
+          set -euo pipefail
+
+          css=themes/snapcd/assets/css/compiled/main.css
+          # Count occurrences, not lines: the file is a single line once minified.
+          n=$(grep -o 'hx-' "$css" | wc -l)
+          echo "compiled stylesheet contains $n 'hx-' occurrences"
+
+          if [ "$n" -lt 100 ]; then
+            echo "::error file=$css::Tailwind purged the utility classes (found $n, expected ~500)."
+            echo "::error::hugo_stats.json was probably missing or stale when build:css ran."
+            exit 1
+          fi
+
+      - name: Fail if the committed stylesheet is stale
+        run: |
+          set -euo pipefail
+
+          css=themes/snapcd/assets/css/compiled/main.css
+
+          if ! git diff --quiet -- "$css"; then
+            echo "::error file=$css::The committed stylesheet does not match its source."
+            echo "::error::You changed CSS (or added a Tailwind class to a layout) without rebuilding."
+            echo "::error::Run the rebuild and commit the result — see the README:"
+            echo "::error::  hugo --gc --buildDrafts --buildFuture"
+            echo "::error::  cd themes/snapcd && npm install && npm run build:css"
+            echo ""
+            echo "--- diff (committed vs. rebuilt) ---"
+            git --no-pager diff --stat -- "$css"
+            exit 1
+          fi
+
+          echo "Committed stylesheet is up to date with its source."
