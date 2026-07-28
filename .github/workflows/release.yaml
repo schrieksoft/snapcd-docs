@@ -114,6 +114,38 @@ jobs:
           AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
           AZURE_STORAGE_KEY: ${{ secrets.AZURE_STORAGE_KEY }}
 
+      # Browser-cache correctness. The origin serves no Cache-Control by default, so
+      # browsers heuristically cache the HTML; after a deploy that stale HTML points
+      # at fingerprinted assets the sync just deleted -> the site renders unstyled
+      # until the browser cache expires (the Cloudflare purge below only clears the
+      # edge, not browsers). Stamp no-cache on the non-fingerprinted documents
+      # (HTML, search index, sitemap, OpenAPI document): browsers may store them but
+      # must revalidate, so a deploy is visible on the next load. Fingerprinted
+      # assets are already fine — their URL changes with their content.
+      - name: Set Cache-Control on documents
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az storage blob list \
+              --account-name "$AZURE_STORAGE_ACCOUNT" \
+              --account-key "$AZURE_STORAGE_KEY" \
+              --container-name '$web' \
+              --num-results '*' \
+              --query "[?ends_with(name, '.html') || ends_with(name, '.xml') || ends_with(name, '.json') || ends_with(name, '.txt')].name" \
+              -o tsv \
+            | while IFS= read -r name; do
+                az storage blob update \
+                  --account-name "$AZURE_STORAGE_ACCOUNT" \
+                  --account-key "$AZURE_STORAGE_KEY" \
+                  --container-name '$web' \
+                  --name "$name" \
+                  --content-cache "no-cache" \
+                  --output none
+              done
+        env:
+          AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+          AZURE_STORAGE_KEY: ${{ secrets.AZURE_STORAGE_KEY }}
+
       - name: Purge Cloudflare cache
         env:
           CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}

@@ -30,12 +30,6 @@ docker run --rm --name scapcd-docs -v $(pwd):/site -p 1314:1314 ghcr.io/schrieks
 
 Open your browser and navigate to `http://localhost:1314`
 
-## Changing content vs. changing styling
-
-These are two different workflows, and confusing them is how the site once spent
-weeks serving a **blue** accent while the source said orange. Read this before you
-touch any CSS.
-
 ### Editing content (`.md` files) — nothing special
 
 Hugo renders markdown on every save and the dev server hot-reloads. Just edit and
@@ -71,9 +65,7 @@ grep -o 'hx-' assets/css/compiled/main.css | wc -l   # expect ~500. A handful me
 which is meaningless once the CSS is minified onto a single line.)
 
 Commit the regenerated `compiled/main.css` **together with** your source edit. A
-source-only commit changes nothing in production — that is exactly the bug that
-shipped the blue accent: the brand commit (`3c6126d`) changed `styles.css` from
-blue to orange but never rebuilt the artifact.
+source-only commit changes nothing in production.
 
 You also need this if you add a **new Tailwind class** to a layout or shortcode
 (e.g. `hx-mt-24`), even though that is not a CSS file: the class does not exist in
