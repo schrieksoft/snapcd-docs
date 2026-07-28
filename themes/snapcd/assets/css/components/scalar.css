@@ -1,0 +1,206 @@
+/* Scalar API reference (/api-reference).
+ *
+ * Port of the app's Scalar block (snapcd-theme.css in the snapcd repo) onto the
+ * docs site's tokens, so the public reference and the in-product one look the
+ * same. The two are deliberately separate files because the token systems differ:
+ * the app has --snap-*, the docs site has the Tailwind --primary-* triple and
+ * hard-coded surface colours. The brand pack is the common source; keep them in
+ * step when either side changes.
+ *
+ * Scalar puts its mode class (light-mode/dark-mode) on <body> and re-declares
+ * variables closer to some consumers (.t-doc__sidebar, .scalar-card), so the
+ * overrides must land on those points too — a rule on the mount alone is beaten
+ * by any closer re-declaration.
+ */
+
+/* Scalar's layout is a grid sized off --full-height (100dvh) with min-height:100dvh,
+ * because standalone it owns the document and the page does the scrolling. Framed by
+ * the docs shell that would push the reference below the fold and lock the outer
+ * scrollbar, so the height is redefined to the space under the navbar and the
+ * rendered column becomes the scroller. */
+/* A percentage/viewport height only clips if every ancestor is height-constrained
+   too, so the shell and the article column are pinned as well — otherwise the mount
+   grows with its content and the page scrolls (or, with the footer gone, locks). */
+.scalar-docs-shell {
+  height: calc(100vh - var(--navbar-height));
+  overflow: hidden;
+}
+
+.scalar-docs-shell > article {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.scalar-docs-mount {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Scalar mounts into an unstyled wrapper div of its own, which is auto-height and
+   would otherwise grow with the content — leaving the percentage heights below it
+   resolving against 50 000px rather than the viewport. */
+.scalar-docs-mount > div {
+  height: 100%;
+  min-height: 0;
+}
+
+.scalar-docs-mount .references-layout {
+  --full-height: 100%;
+  min-height: 0 !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  /* The grid rows are "auto" by default, so a percentage height on the rendered
+     column resolves to auto and it grows with its content (page scrolls). Pin the
+     content row to the remaining space so the column can overflow instead. */
+  grid-template-rows: var(--scalar-header-height, 0px) minmax(0, 1fr) auto !important;
+}
+
+/* Scalar's own rules are scoped with [data-v-…] attribute selectors, which outrank
+   a bare class — hence !important on the properties that make this the scroller. */
+.scalar-docs-mount .references-rendered {
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+}
+
+/* Surfaces, text and borders: per-mode, because the docs site has no single
+ * variable set that flips (unlike the app's --snap-* tokens). */
+body.light-mode,
+#scalar-api-reference,
+#scalar-api-reference .t-doc__sidebar,
+body.light-mode .scalar-card {
+  --scalar-background-1: #ffffff;
+  --scalar-background-2: #f7f7f8;
+  --scalar-background-3: #ededf0;
+  --scalar-color-1: #1a1a1a;
+  --scalar-color-2: #4b4b4b;
+  --scalar-color-3: #7a7a7a;
+  --scalar-border-color: #e5e5e5;
+
+  --scalar-sidebar-background-1: #ffffff;
+  --scalar-sidebar-color-1: #1a1a1a;
+  --scalar-sidebar-color-2: #4b4b4b;
+  --scalar-sidebar-item-hover-background: #f7f7f8;
+  --scalar-sidebar-border-color: #e5e5e5;
+  --scalar-sidebar-search-background: #f7f7f8;
+  --scalar-sidebar-search-color: #4b4b4b;
+  --scalar-sidebar-search-border-color: #e5e5e5;
+}
+
+html.dark body.dark-mode,
+html.dark #scalar-api-reference,
+html.dark #scalar-api-reference .t-doc__sidebar,
+html.dark body.dark-mode .scalar-card {
+  --scalar-background-1: #000000;
+  --scalar-background-2: #0e1216;
+  --scalar-background-3: #171d24;
+  --scalar-color-1: #e8ecef;
+  --scalar-color-2: #9aa5b0;
+  --scalar-color-3: #6b7681;
+  --scalar-border-color: #262e37;
+
+  --scalar-sidebar-background-1: #000000;
+  --scalar-sidebar-color-1: #e8ecef;
+  --scalar-sidebar-color-2: #9aa5b0;
+  --scalar-sidebar-item-hover-background: #0e1216;
+  --scalar-sidebar-border-color: #262e37;
+  --scalar-sidebar-search-background: #0e1216;
+  --scalar-sidebar-search-color: #9aa5b0;
+  --scalar-sidebar-search-border-color: #262e37;
+}
+
+/* Accent, semantic colours, fonts and geometry — mode-independent (the accent
+ * triple resolves the same in :root and .dark). */
+#scalar-api-reference,
+body.light-mode,
+body.dark-mode {
+  --scalar-color-accent: hsl(var(--primary-hue) var(--primary-saturation) var(--primary-lightness));
+  --scalar-background-accent: hsl(var(--primary-hue) var(--primary-saturation) var(--primary-lightness) / 12%);
+  --scalar-sidebar-color-active: hsl(var(--primary-hue) var(--primary-saturation) var(--primary-lightness));
+  --scalar-sidebar-item-active-background: hsl(var(--primary-hue) var(--primary-saturation) var(--primary-lightness) / 12%);
+
+  --scalar-button-1: hsl(var(--primary-hue) var(--primary-saturation) var(--primary-lightness));
+  --scalar-button-1-color: #ffffff;
+  --scalar-button-1-hover: hsl(var(--primary-hue) var(--primary-saturation) calc(var(--primary-lightness) - 4%));
+
+  --scalar-color-green: #00b368;
+  --scalar-color-red: #db4a3f;
+  --scalar-color-blue: #4e8af4;
+  --scalar-color-orange: hsl(var(--primary-hue) var(--primary-saturation) var(--primary-lightness));
+  --scalar-color-yellow: hsl(var(--primary-hue) var(--primary-saturation) var(--primary-lightness));
+  --scalar-color-purple: #8b96a0;
+
+  --scalar-font: inherit;
+  --scalar-font-code: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --scalar-sidebar-width: 340px;
+
+  /* Scalar derives -md/-2xl/... from --scalar-radius where THEY are declared,
+     so zeroing the base alone doesn't reach them — zero the derived set too.
+     --scalar-radius-full is left alone: it draws the genuinely-circular bits. */
+  --scalar-radius: 0;
+  --scalar-radius-md: 0;
+  --scalar-radius-lg: 0;
+  --scalar-radius-xl: 0;
+  --scalar-radius-2xl: 0;
+  --scalar-radius-3xl: 0;
+}
+
+/* Scalar action buttons follow the app's button idiom (lowercase labels).
+   Scoped to .scalar-button: schema rows, enum values and paths are also
+   <button> elements and must keep their casing. */
+#scalar-api-reference .scalar-button {
+  text-transform: lowercase;
+}
+
+/* Squared corners, unconditionally: Scalar rounds through several independent
+   paths (radius variables, utility classes, scoped component rules), so the
+   variable overrides above aren't sufficient on their own. Spared: genuinely
+   circular elements (rounded-full) and the header badges (version / spec chips),
+   which stay chips. */
+#scalar-api-reference *:not([class*="rounded-full"]):not(.badge),
+.z-context *:not([class*="rounded-full"]):not(.badge),
+.scalar-app *:not([class*="rounded-full"]):not(.badge) {
+  border-radius: 0 !important;
+}
+
+/* Client Libraries: no "...more" overflow tile; the selected library gets the
+   same treatment as an active tab (accent slider + accent label) instead of
+   Scalar's 1px text-coloured underline. Scalar's own attribution goes too. */
+#scalar-api-reference .client-libraries-more,
+#scalar-api-reference a[href="https://www.scalar.com"] {
+  display: none !important;
+}
+
+#scalar-api-reference .client-libraries__active {
+  border-bottom: 2px solid hsl(var(--primary-hue) var(--primary-saturation) var(--primary-lightness));
+}
+
+#scalar-api-reference .client-libraries__active .client-libraries-text {
+  color: hsl(var(--primary-hue) var(--primary-saturation) var(--primary-lightness));
+}
+
+/* Outlined Scalar buttons follow the app's only button variant: filled accent. */
+#scalar-api-reference .scalar-button-outlined {
+  background: hsl(var(--primary-hue) var(--primary-saturation) var(--primary-lightness)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
+/* "required" markers (schema properties, request bodies) in accent. */
+#scalar-api-reference .required,
+#scalar-api-reference .property-required,
+#scalar-api-reference .request-body-required {
+  color: hsl(var(--primary-hue) var(--primary-saturation) var(--primary-lightness)) !important;
+}
+
+/* No server behind a static page: hide the remaining try-it affordances and the
+   authentication card, which is noise without anything to authenticate against. */
+#scalar-api-reference .scalar-api-client__send-request-button,
+#scalar-api-reference .references-auth,
+#scalar-api-reference .authenticationRequired,
+#scalar-api-reference [data-testid="auth-indicator"] {
+  display: none !important;
+}

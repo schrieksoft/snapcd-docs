@@ -32,7 +32,8 @@ The Server exposes the following surfaces over HTTP:
 | `/connect/token` | OpenIddict token endpoint — issues JWTs for Users and Service Principals via `client_credentials` |
 | `/runnerhub` | SignalR hub — long-lived bidirectional connection used by Runners |
 | `/agenthub` | SignalR hub — long-lived bidirectional connection used by Agent Instances |
-| `/swagger` | OpenAPI documentation for the Web API |
+| `/ApiReference` | Interactive API reference for the Web API |
+| `/openapi/v1.json` | OpenAPI document for the Web API |
 | `/health` | Liveness / readiness probe |
 
 ## Self-Deployment Dependencies

@@ -13,6 +13,7 @@
 @import "components/jupyter.css";
 @import "components/badge.css";
 @import "components/settings.css";
+@import "components/scalar.css";
 
 html {
   @apply hx-text-base hx-antialiased;

@@ -111,50 +111,72 @@ The failure mode is silent — Tailwind cheerfully emits a stylesheet with every
 `hx-` class stripped, and the site renders naked. If that happens, the class-count
 check in step 3 is how you spot it.
 
-## Refreshing the Settings reference
+## Generated artifacts from the snapcd repo
 
-The `## Settings` section on each `content/components/{server,runner,agent}/_index.md` page is rendered by the `{{< settings component="…" >}}` shortcode (defined under `layouts/`), which walks a JSON Schema data file at `data/schemas/<component>.json`.
+Two kinds of content on this site are **generated artifacts owned by the snapcd code
+repo**, not authored here:
 
-The JSON Schemas are **generated artifacts** owned by the snapcd code repo. The source of truth is `applications/snapcd/schemas/{server,runner,agent}.schema.json`, produced by per-component generators under `applications/snapcd/generators/SnapCd.Settings.Generator.*`. Settings POCO descriptions come from `///` XML doc comments on the C# settings types; defaults come from the property initialisers. See the [Snap CD repository README](https://github.com/schrieksoft/snapcd) for how the generators work end-to-end.
+| Artifact | Rendered by | Lands at |
+|---|---|---|
+| Settings schemas (`{server,runner,agent}.schema.json`) | the `{{< settings component="…" >}}` shortcode | `data/schemas/<component>.json` |
+| OpenAPI document (`openapi.json`) | the API reference page (Scalar) | `static/openapi/v1.json` |
 
-To pull the latest schemas into this docs repo:
+Both are produced by generators in snapcd and guarded there by pre-commit hooks
+(`scripts/check-settings-schemas.sh`, `scripts/check-openapi-document.sh`), so the
+committed artifacts cannot drift from the C# source. Settings descriptions come from
+`///` XML doc comments and defaults from property initialisers; the OpenAPI document
+comes from the controllers and DTOs via `generators/SnapCd.OpenApi.Generator`.
+
+### How they get here
+
+**In CI (authoritative).** The release workflow runs
+`scripts/fetch-snapcd-artifacts.sh`, which downloads all four files from the snapcd
+GitHub release named in `versions.env`. Nothing is committed to this repo, and the
+published site is always tied to a specific snapcd release. Renovate bumps
+`SNAPCD_VERSION` in `versions.env` when a new release ships — hourly, and immediately
+via a `repository_dispatch` from snapcd's release workflow.
+
+**Locally.** Two make targets bring the same four files in, depending on whether you
+want what has been released or what is on your disk:
 
 ```bash
-# from the snapcd code repo
-cd applications/snapcd
-scripts/check-settings-schemas.sh --write    # regenerates schemas/*.schema.json
+make sync                                   # download from the release in versions.env
+make sync VERSION=1.9.0                     # or a specific release
 
-# from this docs repo
-cp /path/to/snapcd/applications/snapcd/schemas/server.schema.json   data/schemas/server.json
-cp /path/to/snapcd/applications/snapcd/schemas/runner.schema.json   data/schemas/runner.json
-cp /path/to/snapcd/applications/snapcd/schemas/agent.schema.json    data/schemas/agent.json
+make sync-local                             # copy from a snapcd checkout instead
+make sync-local SNAPCD_REPO=~/code/snapcd   # non-default checkout location
+
+hugo server --port 1314                     # eyeball the Settings sections and /api-reference/
 ```
 
-Drop the `.schema` segment when copying — Hugo's `Site.Data` indexes by the basename, and the shortcode looks up `Site.Data.schemas.<component>`.
-
-After copying:
+`make sync` wraps the same script CI runs, so it is the way to reproduce what the
+published site will render. `make sync-local` is for previewing changes that have not
+been released yet — it regenerates nothing, so run the generators on the snapcd side
+first if the source has changed there:
 
 ```bash
-hugo server --port 1314    # rebuild; eyeball each component page's Settings section
+cd /path/to/snapcd/applications/snapcd
+scripts/check-settings-schemas.sh --write
+scripts/check-openapi-document.sh --write
 ```
 
-The hand-written "At a glance" tables above the shortcode are **not** auto-generated — they're a curated short index. They can drift from the schema-side descriptions; reconcile by hand when the underlying settings change. (See [open question on auto-generating the tables](#) below.)
+Note the `.schema` segment is dropped for the settings files on the way in: Hugo's
+`Site.Data` indexes by basename, and the shortcode looks up
+`Site.Data.schemas.<component>`.
 
-### When to refresh
+### When they change
 
-Refresh whenever any of the following lands on snapcd `main`:
+Settings schemas: a new public property on a settings POCO, a new `<summary>`, a new
+default, a new section bound via `Configure<T>`, or a change to the hand-authored
+carve-out fragments under `SnapCd.Utils/Settings/Carveouts/`.
 
-- A new public property on a settings POCO (e.g. `RunnerSettings`, `OpenIdConnectSettings`, …)
-- A new `<summary>` doc on an existing property
-- A new default value in a property initialiser
-- A new section bound via `Configure<T>` in a host project
-- A change to one of the hand-authored carve-out fragments under `SnapCd.Utils/Settings/Carveouts/` (e.g. `logging.schema.json`, `azurekeyvault-credentialoptions.schema.json`)
-- A change to the post-process callback in `SnapCd.Settings.Generator.Server` that builds the MassTransit or AzureKeyVault.CredentialOptions fragments
+OpenAPI document: any change to a controller, route, or DTO shape.
 
-The pre-commit hook in the snapcd repo (`scripts/check-settings-schemas.sh`) guards against drift between the C# source and the committed `schemas/*.schema.json` artifacts there. There is **no automated guard** between the snapcd-side artifacts and the copies in this docs repo's `data/schemas/`; the copy step is currently manual.
+In both cases the snapcd-side hook regenerates the artifact, the release publishes it,
+and Renovate pulls it in — no manual step.
 
-### Future: automate the cross-repo sync
-
-The schemas live in two places: `applications/snapcd/schemas/*.schema.json` (canonical) and `docs/snapcd-docs/data/schemas/*.json` (consumed). A future GitHub Action on the snapcd repo could open a cross-repo PR against this docs repo whenever the canonical schemas change. Until that lands, the copy is manual and worth running after any merge to snapcd `main` that touches a settings type, its XML doc, or the generators.
+The hand-written "At a glance" tables above the settings shortcode are **not**
+auto-generated: they are a curated short index and can drift from the schema-side
+descriptions. Reconcile them by hand when the underlying settings change.
 
 

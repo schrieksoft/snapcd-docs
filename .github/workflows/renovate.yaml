@@ -1,0 +1,32 @@
+name: Renovate
+
+# Bumps SNAPCD_VERSION in versions.env, which the release workflow uses to fetch the
+# settings schemas and OpenAPI document from the matching snapcd release. Runs hourly
+# and immediately on repository_dispatch from snapcd's release workflow.
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+  repository_dispatch:
+    types:
+      - snapcd-released
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  renovate:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Renovate
+        uses: renovatebot/github-action@v46.1.13
+        env:
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+        with:
+          configurationFile: renovate.json
+          token: ${{ secrets.RENOVATE_TOKEN }}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits"
+  ],
+  "gitAuthor": "snapcd-bot <noreply@snapcd.io>",
+  "labels": ["dependencies"],
+
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^versions\\.env$/"],
+      "matchStrings": [
+        "SNAPCD_VERSION=(?<currentValue>\\S+)"
+      ],
+      "depNameTemplate": "schrieksoft/snapcd",
+      "datasourceTemplate": "github-releases"
+    }
+  ],
+
+  "packageRules": [
+    {
+      "matchPackageNames": ["*"],
+      "enabled": false
+    },
+    {
+      "groupName": "snapcd",
+      "commitMessageTopic": "snapcd settings schemas and OpenAPI document",
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true,
+      "ignoreTests": true,
+      "matchPackageNames": [
+        "schrieksoft/snapcd"
+      ],
+      "enabled": true
+    }
+  ],
+  "prHourlyLimit": 10
+}

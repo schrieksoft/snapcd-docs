@@ -63,6 +63,13 @@ jobs:
           cache: npm
           cache-dependency-path: themes/snapcd/package-lock.json
 
+      # The settings schemas and the OpenAPI document are generated artifacts owned
+      # by the snapcd repo, published as release assets. Fetching them by tag (rather
+      # than committing copies) keeps the rendered reference tied to a specific
+      # release; Renovate bumps snapcd-version.txt when a new one ships.
+      - name: Fetch snapcd artifacts
+        run: scripts/fetch-snapcd-artifacts.sh
+
       # Backstop. The compiled stylesheet is a committed build artifact, and it can
       # drift from its source — commit 3c6126d changed the brand accent in
       # styles.css but never rebuilt the artifact, so the site served a blue accent

@@ -1,0 +1,47 @@
+{{ define "main" }}
+  {{/* Keeps the docs sidebar; Scalar fills the content column with its own
+       navigation and scrolls internally. */}}
+  <div class='hx-mx-auto hx-flex {{ partial "utils/page-width" . }} scalar-docs-shell'>
+    {{ partial "sidebar.html" (dict "context" .) }}
+    <article class="hx-w-full hx-break-words hx-min-w-0">
+      <div id="scalar-api-reference" class="scalar-docs-mount"
+           data-spec="{{ "openapi/v1.json" | relURL }}"></div>
+    </article>
+  </div>
+
+  <script src="{{ "scalar/standalone.min.js" | relURL }}"></script>
+  <script>
+    (function () {
+      const isDark = () => document.documentElement.classList.contains("dark");
+
+      // Hugo escapes "/" inside script blocks, so the spec path is carried on the
+      // mount element rather than interpolated into JS.
+      const specUrl = document.getElementById("scalar-api-reference").dataset.spec;
+
+      window.Scalar.createApiReference("#scalar-api-reference", {
+        url: specUrl,
+        withDefaultFonts: false,
+        // Label sidebar and search entries by path. The alternative ("summary")
+        // falls back to the path only when a summary is absent, so a partially
+        // documented API gets an inconsistent mix of paths and prose sentences.
+        operationTitleSource: "path",
+        darkMode: isDark(),
+        hideDarkModeToggle: true,
+        // Static page: there is no server to call, so every try-it affordance goes.
+        hideTestRequestButton: true,
+        hideClientButton: true,
+        // Scalar's hosted-product hooks and toolbar are not part of Snap CD.
+        showDeveloperTools: "never",
+        agent: { disabled: true },
+        mcp: { disabled: true },
+      });
+
+      // The docs theme toggles `html.dark` without reloading; colours follow via
+      // CSS variables, but Scalar's own mode class needs the nudge.
+      new MutationObserver(function () {
+        document.body.classList.toggle("dark-mode", isDark());
+        document.body.classList.toggle("light-mode", !isDark());
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    })();
+  </script>
+{{ end }}
