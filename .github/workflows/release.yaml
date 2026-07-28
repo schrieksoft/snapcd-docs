@@ -131,7 +131,7 @@ jobs:
               --account-key "$AZURE_STORAGE_KEY" \
               --container-name '$web' \
               --num-results '*' \
-              --query "[?ends_with(name, '.html') || ends_with(name, '.xml') || ends_with(name, '.json') || ends_with(name, '.txt')].name" \
+              --query "[?ends_with(name, '.html') || ends_with(name, '.xml') || ends_with(name, '.json') || ends_with(name, '.yaml') || ends_with(name, '.yml') || ends_with(name, '.txt')].name" \
               -o tsv \
             | while IFS= read -r name; do
                 az storage blob update \

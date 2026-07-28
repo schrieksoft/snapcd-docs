@@ -110,8 +110,8 @@ repo**, not authored here:
 
 | Artifact | Rendered by | Lands at |
 |---|---|---|
-| Settings schemas (`{server,runner,agent}.schema.json`) | the `{{< settings component="…" >}}` shortcode | `data/schemas/<component>.json` |
-| OpenAPI document (`openapi.json`) | the API reference page (Scalar) | `static/openapi/v1.json` |
+| Settings schemas (`{server,runner,agent}.schema.yaml`) | the `{{< settings component="…" >}}` shortcode | `data/schemas/<component>.yaml` |
+| OpenAPI document (`openapi.yaml`) | the API reference page (Scalar) | `static/openapi/v1.yaml` |
 
 Both are produced by generators in snapcd and guarded there by pre-commit hooks
 (`scripts/check-settings-schemas.sh`, `scripts/check-openapi-document.sh`), so the

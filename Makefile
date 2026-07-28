@@ -22,10 +22,10 @@ sync-local:
 	    exit 1; \
 	}
 	@# Settings schemas: Hugo indexes Site.Data by basename, so the .schema segment goes.
-	cp "$(SCHEMA_SRC)/server.schema.json" data/schemas/server.json
-	cp "$(SCHEMA_SRC)/runner.schema.json" data/schemas/runner.json
-	cp "$(SCHEMA_SRC)/agent.schema.json"  data/schemas/agent.json
+	cp "$(SCHEMA_SRC)/server.schema.yaml" data/schemas/server.yaml
+	cp "$(SCHEMA_SRC)/runner.schema.yaml" data/schemas/runner.yaml
+	cp "$(SCHEMA_SRC)/agent.schema.yaml"  data/schemas/agent.yaml
 	@# OpenAPI document: served as a static asset, fetched by Scalar at runtime.
-	cp "$(SCHEMA_SRC)/openapi.json" static/openapi/v1.json
+	cp "$(SCHEMA_SRC)/openapi.yaml" static/openapi/v1.yaml
 	@echo "synced settings schemas + OpenAPI document from $(SNAPCD_REPO)"
 	@git --no-pager diff --stat -- data/schemas static/openapi || true

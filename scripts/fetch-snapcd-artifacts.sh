@@ -39,16 +39,16 @@ fetch() {
 }
 
 for component in server runner agent; do
-    fetch "${component}.schema.json"
+    fetch "${component}.schema.yaml"
 done
-fetch "openapi.json"
+fetch "openapi.yaml"
 
 # Hugo indexes Site.Data by basename, so the .schema segment is dropped on the way in.
 for component in server runner agent; do
-    mv "${STAGING}/${component}.schema.json" "data/schemas/${component}.json"
-    echo "  data/schemas/${component}.json"
+    mv "${STAGING}/${component}.schema.yaml" "data/schemas/${component}.yaml"
+    echo "  data/schemas/${component}.yaml"
 done
 
 # The OpenAPI document is a static asset: Scalar fetches it over HTTP at runtime.
-mv "${STAGING}/openapi.json" "static/openapi/v1.json"
-echo "  static/openapi/v1.json"
+mv "${STAGING}/openapi.yaml" "static/openapi/v1.yaml"
+echo "  static/openapi/v1.yaml"
