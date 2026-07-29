@@ -83,6 +83,9 @@ Organization roles apply system-wide.
 | `SourceRefresherPreselectionCreator` | Can create source refresher preselections |
 | `SourceRefresherPreselectionContributor` | Can contribute to source refresher preselections |
 | `SourceRefresherPreselectionReader` | Read-only access to source refresher preselections |
+| `StateStoreCreator` | Can create new State Stores |
+| `StateStoreContributor` | Can contribute to all State Stores |
+| `StateStoreReader` | Read-only access to all State Stores |
 
 ## Stack Roles
 
@@ -99,7 +102,6 @@ Stack roles apply to a specific Stack and its child Namespaces and Modules.
 | `Reader` | Read-only access to Stack and child resources |
 | `NamespaceCreator` | Can create new Namespaces in this Stack |
 | `IdentityAccessManager` | Can manage role assignments on the Stack |
-| `SourceChangeNotifier` | Can trigger source change notifications |
 | `JobManager` | Can manage job execution |
 
 ## Namespace Roles
@@ -117,7 +119,6 @@ Namespace roles apply to a specific Namespace and its child Modules.
 | `Reader` | Read-only access to Namespace and child Modules |
 | `ModuleCreator` | Can create new Modules in this Namespace |
 | `IdentityAccessManager` | Can manage role assignments on the Namespace |
-| `SourceChangeNotifier` | Can trigger source change notifications |
 | `JobManager` | Can manage job execution |
 
 ## Module Roles
@@ -134,7 +135,6 @@ Module roles apply to a specific Module.
 | `Contributor` | Can read and modify the Module |
 | `Reader` | Read-only access to the Module |
 | `IdentityAccessManager` | Can manage role assignments on the Module |
-| `SourceChangeNotifier` | Can trigger source change notifications |
 | `JobManager` | Can manage job execution |
 
 ## Runner Roles
@@ -181,6 +181,21 @@ Integration roles apply to a specific Integration.
 | `Contributor` | Can read and modify the Integration |
 | `Reader` | Read-only access to the Integration |
 | `IdentityAccessManager` | Can manage role assignments on the Integration |
+
+## State Store Roles
+
+State Store roles apply to a specific State Store.
+
+**Terraform Resource:** [snapcd_state_store_role_assignment](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/state_store_role_assignment)
+
+**Additional Field:** `state_store_id` - ID of the State Store
+
+| Role | Description |
+|------|-------------|
+| `Owner` | Full control over the State Store |
+| `Contributor` | Can read and modify the State Store |
+| `Reader` | Read-only access to the State Store |
+| `IdentityAccessManager` | Can manage role assignments on the State Store |
 
 # Examples
 

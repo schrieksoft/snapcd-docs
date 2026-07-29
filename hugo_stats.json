@@ -505,6 +505,7 @@
       "start-using-the-terraform-provider",
       "state-files",
       "state-store",
+      "state-store-roles",
       "storage",
       "supply",
       "supported-loaders",

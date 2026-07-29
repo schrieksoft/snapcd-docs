@@ -105,7 +105,4 @@ Access to a State Store is controlled via role assignments, following the same p
 | **Reader** | Read-only access to state |
 | **IdentityAccessManager** | Manage role assignments on the State Store |
 
-Role assignment resources:
-- [User State Store Role Assignment](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/user_state_store_role_assignment)
-- [Service Principal State Store Role Assignment](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/service_principal_state_store_role_assignment)
-- [Group State Store Role Assignment](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/group_state_store_role_assignment)
+Roles are assigned via the [State Store Role Assignment](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/state_store_role_assignment) resource.
