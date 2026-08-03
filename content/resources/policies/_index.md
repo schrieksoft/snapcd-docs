@@ -16,9 +16,16 @@ Each engine uses its ecosystem-native policy framework:
 
 Policies attach to a [Module]({{< relref "resources/stack-namespace-module#module" >}}) or to a [Namespace]({{< relref "resources/stack-namespace-module#namespace" >}}) (applying to every Module in the Namespace, additively — there is no Module-level override of Namespace policies). The engine and the source kind are part of the resource type:
 
-```
-snapcd_{module,namespace}_{terraform,pulumi}_{inline,remote,local}_policy
-```
+| Engine | Kind | Module-level | Namespace-level |
+|---|---|---|---|
+| Terraform/OpenTofu | inline | [snapcd_module_terraform_inline_policy](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/module_terraform_inline_policy) | [snapcd_namespace_terraform_inline_policy](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/namespace_terraform_inline_policy) |
+| Terraform/OpenTofu | remote | [snapcd_module_terraform_remote_policy](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/module_terraform_remote_policy) | [snapcd_namespace_terraform_remote_policy](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/namespace_terraform_remote_policy) |
+| Terraform/OpenTofu | local | [snapcd_module_terraform_local_policy](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/module_terraform_local_policy) | [snapcd_namespace_terraform_local_policy](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/namespace_terraform_local_policy) |
+| Pulumi | inline | [snapcd_module_pulumi_inline_policy](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/module_pulumi_inline_policy) | [snapcd_namespace_pulumi_inline_policy](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/namespace_pulumi_inline_policy) |
+| Pulumi | remote | [snapcd_module_pulumi_remote_policy](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/module_pulumi_remote_policy) | [snapcd_namespace_pulumi_remote_policy](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/namespace_pulumi_remote_policy) |
+| Pulumi | local | [snapcd_module_pulumi_local_policy](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/module_pulumi_local_policy) | [snapcd_namespace_pulumi_local_policy](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/namespace_pulumi_local_policy) |
+
+Each resource has a matching data source under the same name.
 
 | Kind | Fields | Semantics |
 |---|---|---|
