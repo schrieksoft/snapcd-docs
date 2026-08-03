@@ -33,7 +33,7 @@ Each resource has a matching data source under the same name.
 | `remote` | `repo_url`, `revision`, `path` | A directory in a git repository, fetched at the pinned revision (tag, branch or commit SHA) when the job is dispatched. The whole tree is evaluated as one bundle: files can share helper packages, ship their own `opa test`/`conftest verify` tests, and be code-reviewed in their own repo. |
 | `local` | `path` | A directory on the Runner host, operator-managed. Cheapest to set up, weakest pinning: the contents at evaluation time are whatever the folder holds. |
 
-Shared fields on every policy: `name` (unique per parent), `enabled` (default `true`), and `evaluate_on` — `ApplyAndDestroy` (default), `ApplyOnly` or `DestroyOnly`. Destroy jobs evaluate policies exactly like apply jobs; preventing deletion of protected resources is a first-class use case.
+Shared fields on every policy: `name` (unique per parent), `enabled` (default `true`), and `evaluate_on`. For Terraform/OpenTofu policies `evaluate_on` is `ApplyAndDestroy` (default), `ApplyOnly` or `DestroyOnly` — destroy jobs evaluate policies exactly like apply jobs, and preventing deletion of protected resources is a first-class use case. For Pulumi policies the only value is `ApplyOnly` (see the CrossGuard limitation below).
 
 A policy only ever applies to jobs of its engine: a Terraform policy is never evaluated for a Pulumi Module, and vice versa.
 
@@ -84,6 +84,8 @@ For **inline** Pulumi policies, `policy_content` holds only the pack's entry mod
 - On air-gapped Runners, set `PolicyEvaluation:PackProvisioningEnabled` to `false`: packs then run on the ambient interpreter with the policy SDK preinstalled by the operator, and inline policies declaring `additional_dependencies` fail loudly.
 
 **Remote** and **local** Pulumi policies reference a complete, self-describing pack (its own `PulumiPolicy.yaml` declares the runtime; dependencies vendored or preinstalled by the operator). The Runner never rewrites a pack's own configuration.
+
+One engine-inherent limitation: **CrossGuard evaluates apply-side previews only** — the pulumi CLI has no policy support on `destroy`, so destroy jobs run without Pulumi policy enforcement and `evaluate_on` destroy settings have no effect on Pulumi policies. Destroy protection is a Terraform/OpenTofu policy capability.
 
 ## What the Runner needs
 
