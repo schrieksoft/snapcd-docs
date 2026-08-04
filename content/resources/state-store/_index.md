@@ -73,12 +73,12 @@ data "snapcd_state_store" "default" {
 
 resource "snapcd_namespace_terraform_array_flag" "http_backend" {
   for_each = {
-    address        = "${var.snapcd_server_url}/api/state/${data.snapcd_state_store.default.id}/$${SNAPCD_MODULE_NAME}"
-    lock_address   = "${var.snapcd_server_url}/api/state/${data.snapcd_state_store.default.id}/$${SNAPCD_MODULE_NAME}/lock"
-    unlock_address = "${var.snapcd_server_url}/api/state/${data.snapcd_state_store.default.id}/$${SNAPCD_MODULE_NAME}/unlock"
+    address        = "${var.snapcd_server_url}/api/${var.organization_id}/state/${data.snapcd_state_store.default.id}/$${SNAPCD_MODULE_NAME}"
+    lock_address   = "${var.snapcd_server_url}/api/${var.organization_id}/state/${data.snapcd_state_store.default.id}/$${SNAPCD_MODULE_NAME}/lock"
+    unlock_address = "${var.snapcd_server_url}/api/${var.organization_id}/state/${data.snapcd_state_store.default.id}/$${SNAPCD_MODULE_NAME}/unlock"
     lock_method    = "POST"
     unlock_method  = "POST"
-    username       = "${var.organization_id}:$${SNAPCD_CLIENT_ID}"
+    username       = "$${SNAPCD_CLIENT_ID}"
     password       = "$${SNAPCD_CLIENT_SECRET}"
   }
   namespace_id = snapcd_namespace.example.id
@@ -90,9 +90,19 @@ resource "snapcd_namespace_terraform_array_flag" "http_backend" {
 
 `$${SNAPCD_MODULE_NAME}` is resolved from the Namespace Input above. `$${SNAPCD_CLIENT_ID}` and `$${SNAPCD_CLIENT_SECRET}` come from the Runner's [RunnerEnvVars]({{< relref "components/runner#runner-environment-variables" >}}) configuration. The double-dollar (`$$`) escapes Terraform interpolation so the literal `${...}` is preserved for the Runner to resolve at deploy time.
 
-## Authentication
+## Endpoint and Authentication
 
-The HTTP backend authenticates via HTTP Basic auth. The username is `{organizationId}:{clientId}` and the password is the Service Principal's client secret. The `SNAPCD_CLIENT_ID` and `SNAPCD_CLIENT_SECRET` environment variables are configured on the Runner and made available to the engine process.
+The backend endpoint is:
+
+```
+/api/{organizationId}/state/{stateStoreId}/{stateFileName}
+```
+
+with `/lock` and `/unlock` appended for the locking endpoints.
+
+The HTTP backend authenticates via HTTP Basic auth. The username is the Service Principal's client id (`clientId`) and the password is its client secret. The `SNAPCD_CLIENT_ID` and `SNAPCD_CLIENT_SECRET` environment variables are configured on the Runner and made available to the engine process.
+
+> NOTE: an older form of this endpoint omits the organization from the path (`/api/state/{stateStoreId}/{stateFileName}`) and instead expects the username to be `{organizationId}:{clientId}`. It still works, so existing backend configurations keep functioning, but it is deprecated — the Server logs a warning on every request that uses it. Move the organization id into the path and reduce the username to the bare client id.
 
 ## Access Control
 
