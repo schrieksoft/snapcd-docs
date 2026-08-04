@@ -54,6 +54,36 @@ These ship reference deployments for running Snap CD components in your environm
 5. **Open the PR** with a description that covers the *why* of the change as much as the *what*. Link the issue.
 6. **Sign off** that the contribution is yours to make. By submitting a PR you confirm you agree to the licensing terms of the target repository.
 
+## Filling in the pull request template
+
+The Snap CD repositories that publish releases carry a PR template with two sections that feed the release automatically. Both are read from the merge commit, which GitHub pre-fills from the pull request description.
+
+### Version
+
+The release version is decided by a `+semver:` directive on its own line in the PR description. It is pre-filled with `patch`; change it when the work warrants more.
+
+| Directive | Use it for |
+|---|---|
+| `+semver: patch` | A fix, a refactor, docs, tests or CI — anything a user can adopt without reading the notes. The default and the common case. |
+| `+semver: minor` | New capability: a new resource, endpoint, setting or dashboard surface, or a meaningful but backwards-compatible behaviour change. |
+| `+semver: major` | A breaking change: a removed or renamed resource, endpoint or setting; a changed default that alters existing behaviour; or a migration the operator has to act on. |
+| `+semver: none` | No release at all. |
+
+Only one directive should appear in the description. If several are present the most significant one wins, so a stray example can silently produce a major release.
+
+### Release notes
+
+Whatever you write between the `<!-- release-notes -->` markers becomes the body of the GitHub release. Write it for someone deciding whether to upgrade: what changed, why it matters, and anything that requires action on their side.
+
+It is copied verbatim as GitHub-flavoured Markdown — headings, lists, tables, code fences, links and `#123` references all work.
+
+Two things you do not need to write:
+
+- **The title.** The PR title becomes the heading, with the trailing `(#123)` and any `+semver:` directive stripped. Start the block with your own `##` heading only if you want a different one.
+- **The byline.** The release date, the PR number and the issues it closes are derived from the commit and the pull request's linked issues.
+
+Leaving the block empty is fine for changes that do not warrant a note — the release falls back to the pull request title.
+
 ## Reporting bugs and security issues
 
 - **General bugs and feature requests** — file an issue on the repository in question.
