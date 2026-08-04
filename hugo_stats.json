@@ -509,6 +509,7 @@
       "settings",
       "severity-lives-in-the-policy-content",
       "sidecars",
+      "skipping-the-release",
       "slack-setup",
       "stack",
       "stack-roles",

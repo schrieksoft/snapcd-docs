@@ -67,9 +67,15 @@ The release version is decided by a `+semver:` directive on its own line in the 
 | `+semver: patch` | A fix, a refactor, docs, tests or CI — anything a user can adopt without reading the notes. The default and the common case. |
 | `+semver: minor` | New capability: a new resource, endpoint, setting or dashboard surface, or a meaningful but backwards-compatible behaviour change. |
 | `+semver: major` | A breaking change: a removed or renamed resource, endpoint or setting; a changed default that alters existing behaviour; or a migration the operator has to act on. |
-| `+semver: none` | No release at all. |
+| `+semver: none` | Ignore any other `+semver` directive in this commit and take the branch default. This is a versioning instruction, not a way to skip a release. |
 
 Only one directive should appear in the description. If several are present the most significant one wins, so a stray example can silently produce a major release.
+
+### Skipping the release
+
+To land a change without publishing a release, put `+norelease` anywhere in the description — on its own line, or at the end of the title. The version is still calculated, but nothing is published — no packages, no container images, no GitHub release, no downstream notification. Build and tests still run, so the change is still verified.
+
+This is a Snap CD flag rather than a GitVersion one: the `+semver:` directives only describe how a commit contributes to the version, and none of them means "do not publish". As with `+semver:`, the flag is matched anywhere in the description, so mentioning it in prose will also skip the release.
 
 ### Release notes
 
