@@ -93,7 +93,7 @@ With `--monorepo`, the generated Namespace also sets `default_trigger_path_filte
 - `migrate run` is **not a PR job**: pushing state from an unmerged branch means the world has already changed if the PR is rejected. Merge first, then run the migration once — behind a manual trigger, or a person at a terminal — during a change freeze on the monolith. A crashed run is retried by just re-running, and every step writes a receipt file recording what happened.
 - Applying the bootstrap and retiring the monolith stay human steps, taken after every module verifies clean.
 
-The [sample's GitHub Actions workflow](https://github.com/snapcd-samples/sample-deployment-demonolith/blob/main/.github/workflows/split.yml) is a runnable version of exactly these lanes: verify on every PR, a read-only rehearsal on every PR, and the migration behind a manual `workflow_dispatch`.
+The [sample's GitHub Actions workflow](https://github.com/snapcd-samples/sample-deployment-demonolith/blob/main/.github/workflows/migrate.yml) is a runnable version of exactly these lanes: `refactor diff` on every PR and push, a read-only `migrate prove` on every PR, and the migration behind a manual `workflow_dispatch`.
 
 ## Limits and a working example
 
