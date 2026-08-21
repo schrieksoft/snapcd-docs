@@ -46,7 +46,7 @@ Blocks with no comment fall into a catchall module (default name `legacy`). Data
 demonolith refactor
 ```
 
-This analyzes the monolith, shows the map — including a dependency graph with the order the new modules must be deployed in — and, after your approval, writes the new module directories (default `modules/`). Each one is plain Terraform: the moved blocks, the variables and locals they reference, a `root.tf` with the required providers and a backend derived from the monolith's (the state location gets a per-module suffix), and generated `variable`/`output` pairs wherever a value crosses a module boundary. If your dependencies form a cycle, the split is impossible and demonolith refuses with the cycle named — before anything is written.
+This analyzes the monolith, shows the map — including a dependency graph with the order the new modules must be deployed in — and, after your approval, writes the new module directories (default `roots/` — each is a root module with its own backend, providers, and state, where a reusable module by convention has none of those, so the name keeps `modules/` free for the reusable kind). Each one is plain Terraform: the moved blocks, the variables and locals they reference, a `root.tf` with the required providers and a backend derived from the monolith's (the state location gets a per-module suffix), and generated `variable`/`output` pairs wherever a value crosses a module boundary. If your dependencies form a cycle, the split is impossible and demonolith refuses with the cycle named — before anything is written.
 
 The target directories belong to demonolith: `refactor run` refuses when they already exist, and `--overwrite` deletes and rewrites them entirely — anything added to them by hand does not survive a run.
 
@@ -77,7 +77,7 @@ There is also an **unproven path** for when you want the mechanical split and mi
 
 ## Adopt into Snap CD
 
-Alongside the modules, `refactor` generates a **bootstrap module** (`modules/snapcd/`) from the map alone: a [Namespace]({{< relref "resources/stack-namespace-module#namespace" >}}), one [Module]({{< relref "resources/stack-namespace-module#module" >}}) per new directory, every cross-module value as a [`snapcd_module_input_from_output`]({{< relref "resources/module-inputs" >}}) wiring, and every ordering dependency as a `snapcd_depends_on_module`. Apply it against your server (with `source_url` pointing at the repository holding the new modules) and Snap CD takes over what the monolith did implicitly: applying modules in dependency order, passing values between them, and cascading changes when an upstream output changes.
+Alongside the modules, `refactor` generates a **bootstrap module** (`roots/snapcd/`) from the map alone: a [Namespace]({{< relref "resources/stack-namespace-module#namespace" >}}), one [Module]({{< relref "resources/stack-namespace-module#module" >}}) per new directory, every cross-module value as a [`snapcd_module_input_from_output`]({{< relref "resources/module-inputs" >}}) wiring, and every ordering dependency as a `snapcd_depends_on_module`. Apply it against your server (with `source_url` pointing at the repository holding the new modules) and Snap CD takes over what the monolith did implicitly: applying modules in dependency order, passing values between them, and cascading changes when an upstream output changes.
 
 With `--monorepo`, the generated Namespace also sets `default_trigger_path_filter_enabled = true`, so each Module only redeploys when a commit touches its own directory — see [Monorepos]({{< relref "guides/monorepos" >}}) for how that filter works.
 
@@ -93,7 +93,7 @@ With `--monorepo`, the generated Namespace also sets `default_trigger_path_filte
 - `migrate run` is **not a PR job**: pushing state from an unmerged branch means the world has already changed if the PR is rejected. Merge first, then run the migration once — behind a manual trigger, or a person at a terminal — during a change freeze on the monolith. A crashed run is retried by just re-running, and every step writes a receipt file recording what happened.
 - Applying the bootstrap and retiring the monolith stay human steps, taken after every module verifies clean.
 
-The [sample's GitHub Actions workflow](https://github.com/snapcd-samples/sample-deployment-demonolith/blob/main/.github/workflows/migrate.yml) is a runnable version of exactly these lanes: `refactor diff` on every PR and push, a read-only `migrate prove` on every PR, and the migration behind a manual `workflow_dispatch`.
+The [sample's GitHub Actions workflow](https://github.com/snapcd-samples/sample-deployment-demonolith/blob/main/.github/workflows/migrate.yml) is a runnable version of exactly these lanes: `refactor diff` on every PR, a read-only `migrate prove` on every PR, and the migration behind a manual `workflow_dispatch` (in the sample it all targets a demo branch, so the repo's own main stays quiet).
 
 ## Limits and a working example
 
