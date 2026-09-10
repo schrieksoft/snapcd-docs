@@ -106,10 +106,10 @@ The Server round-trips the key through Cloud to obtain a signed JWT license toke
 
 ## What's New
 
-The What's New entry at the top of the navigation opens a page with three parts, visible to system administrators, organization owners and subscription managers:
+The What's New entry at the top of the navigation opens a page with three parts, visible to everyone who is signed in:
 
 - **Alerts** and **Notices**: short items sent with the daily usage beacon. A dot on the navigation entry marks items this browser has not opened yet.
-- **Module limit**: when an organization is at 90% of the modules its edition allows, at the limit, or over it, an alert says so, with a Dismiss button. It returns if another module is added. The navigation entry shows a red marker while one is active. This is decided on the Server from the license and the module count; only the wording comes from the beacon.
+- **Module limit**: shown to organization owners, subscription managers and system administrators only. When an organization is at 90% of the modules its edition allows, at the limit, or over it, an alert says so, with a Dismiss button. It returns if another module is added. The navigation entry shows a red marker while one is active. This is decided on the Server from the license and the module count; only the wording comes from the beacon.
 - **Releases**: every release newer than the running version, read from GitHub, with the first line of its notes and a marker for minor and major releases. The running version is printed at the bottom of the navigation, with the newest release beside it when one exists.
 
 ## Network communication
