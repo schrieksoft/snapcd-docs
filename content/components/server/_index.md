@@ -104,6 +104,39 @@ License tokens are issued by the Cloud instance to organizations on snapcd.io. T
 
 The Server round-trips the key through Cloud to obtain a signed JWT license token, then caches it locally. A background job periodically refreshes the token so that Cloud-side subscription state (cancellation, plan changes, expiry) propagates to the Self-Host. Brief network outages between the Self-Host and Cloud do not affect availability — the cached token continues to be honoured until its expiry.
 
+## What's New
+
+The What's New entry at the top of the navigation opens a page with three parts, visible to system administrators, organization owners and subscription managers:
+
+- **Alerts** and **Notices**: short items sent with the daily usage beacon. A dot on the navigation entry marks items this browser has not opened yet.
+- **Module limit**: when an organization is at 90% of the modules its edition allows, at the limit, or over it, an alert says so, with a Dismiss button. It returns if another module is added. The navigation entry shows a red marker while one is active. This is decided on the Server from the license and the module count; only the wording comes from the beacon.
+- **Releases**: every release newer than the running version, read from GitHub, with the first line of its notes and a marker for minor and major releases. The running version is printed at the bottom of the navigation, with the newest release beside it when one exists.
+
+## Network communication
+
+The Server contacts `snapcd.io`, and GitHub for the release list. Four requests exist:
+
+| Request | When | Sends | Receives |
+|---|---|---|---|
+| License issue and refresh | Only once an organization has entered a license key | License key, current token, installation seed | A signed license token |
+| Signing key | Daily | Nothing | The public key that verifies license tokens |
+| Usage beacon | Daily, and once after a license key changes | Installation seed, Server version, module count, total job count | Notices, alerts and the module-limit texts for the What's New page |
+| Release list | Daily, and when the What's New page is opened, at most hourly | Nothing | The release list from `api.github.com`; drives the version indicator and the Releases section |
+
+The installation seed is a random identifier created once per database. It never names anything. For an installation with a license key it links the installation to that license; otherwise it identifies nothing.
+
+The usage beacon is on by default. To disable it before first start:
+
+```yaml
+env:
+  - name: Telemetry__Enabled
+    value: "false"
+```
+
+Disabling it stops the notices and alerts on the What's New page, which arrive in the beacon's response; module-limit alerts still show, with built-in wording. The version indicator and the Releases section come from GitHub and are unaffected. The license requests cannot be disabled while a license key is in use; a Server without a license key makes none.
+
+A beacon that fails is retried twice, after 10 seconds and after a minute, then left until the next day. Failures are logged at `Debug` and never affect the Server.
+
 ## Settings
 
 The Server reads its settings from the standard layered pipeline described in [Deployment > Settings]({{< relref "deployment/settings" >}}) — `appsettings.json`, environment-specific overrides, environment variables, command-line arguments, and the External Settings provider.
