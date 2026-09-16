@@ -14,13 +14,13 @@ This guide covers the demonolith workflow and the adoption step. For the underly
 demonolith is split at its most important line: changing **code** (offline, no credentials, reversible with git) versus migrating **state** (touches real backends). Each family runs map → run → verify in order, pausing for approval before anything is executed:
 
 ```
-demonolith refactor            # the code split — no credentials, no state touched
+demonolith split refactor            # the code split — no credentials, no state touched
   refactor map                 #   analyze → write the map (the file you review)
   refactor run                 #   execute the map: write the new module directories
   refactor validate            #   ask the engine whether it accepts what was written
   refactor diff                #   CI gate: output on disk still matches the source
 
-demonolith migrate             # the state migration
+demonolith split migrate             # the state migration
   migrate map                  #   pull read-only, back up, split into local state copies
   migrate prove                #   prove the split changes nothing (plans over the local copies)
   migrate run                  #   push each module's state to its new backend (guarded, never forced)
@@ -34,16 +34,16 @@ Everything hinges on the **map** (`demonolith-refactor-map.yaml`): a reviewable 
 Placement is driven by comments in the monolith's source. Put one above each `resource` or `module` block, naming the module it should end up in:
 
 ```hcl
-# @demono:move networking
+# @demono:split networking
 resource "aws_vpc" "main" { ... }
 ```
 
-Blocks with no comment fall into a catchall module (default name `legacy`). Data sources are never annotated — they automatically follow the modules that read them. `demonolith refactor map -i` walks you through the unassigned blocks interactively and writes your choices back into the source as comments, so the decisions are reviewable in git.
+Blocks with no comment fall into a catchall module (default name `legacy`). Data sources are never annotated — they automatically follow the modules that read them. `demonolith split refactor map -i` walks you through the unassigned blocks interactively and writes your choices back into the source as comments, so the decisions are reviewable in git.
 
 ## Split the code
 
 ```bash
-demonolith refactor
+demonolith split refactor
 ```
 
 This analyzes the monolith, shows the map — including a dependency graph with the order the new modules must be deployed in — and, after your approval, writes the new module directories (default `roots/` — each is a root module with its own backend, providers, and state, where a reusable module by convention has none of those, so the name keeps `modules/` free for the reusable kind). Each one is plain Terraform: the moved blocks, the variables and locals they reference, a `root.tf` with the required providers and a backend derived from the monolith's (the state location gets a per-module suffix), and generated `variable`/`output` pairs wherever a value crosses a module boundary. If your dependencies form a cycle, the split is impossible and demonolith refuses with the cycle named — before anything is written.
@@ -59,7 +59,7 @@ For a monorepo layout — the new modules staying in the same repository as shar
 ## Migrate the state
 
 ```bash
-demonolith migrate --engine tofu
+demonolith split migrate --engine tofu
 ```
 
 Four steps, each safe to re-run after a crash:
@@ -83,7 +83,7 @@ With `--monorepo`, the generated Namespace also sets `default_trigger_path_filte
 
 ## Running it locally vs in CI
 
-**Locally**, the whole journey fits in one terminal, and for a solo operator that is the simplest way to run it: in the shell session where the monolith inits and plans cleanly — a refreshed, zero-change plan, which is also where drift is ruled out (demonolith's one prerequisite), run `demonolith refactor --engine …` (the validate step runs inline), review the map, run `demonolith migrate --engine …`, then apply the bootstrap. Every step pauses for approval before anything is executed, and `-i` walks you through the inputs interactively.
+**Locally**, the whole journey fits in one terminal, and for a solo operator that is the simplest way to run it: in the shell session where the monolith inits and plans cleanly — a refreshed, zero-change plan, which is also where drift is ruled out (demonolith's one prerequisite), run `demonolith split refactor --engine …` (the validate step runs inline), review the map, run `demonolith split migrate --engine …`, then apply the bootstrap. Every step pauses for approval before anything is executed, and `-i` walks you through the inputs interactively.
 
 **In a team**, the two halves land differently, because one is reversible and one is not:
 

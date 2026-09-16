@@ -11,3 +11,4 @@ Step-by-step guidance for getting specific things done with Snap CD. Where the [
 - **[Switching Service Bus]({{< relref "guides/switching-service-bus" >}})** — moving between the SQL Server and Azure Service Bus transports, or to a different Azure Service Bus namespace
 - **[Monorepos]({{< relref "guides/monorepos" >}})** — scoping gitops triggers to the directories a Module depends on, and versioning components independently with tag prefixes
 - **[Splitting a Monolith]({{< relref "guides/splitting-a-monolith" >}})** — using the demonolith CLI to split a monolithic Terraform/OpenTofu root into independent Modules, migrate the state safely, and adopt the result into Snap CD
+- **[Moving Resources Between Roots]({{< relref "guides/moving-resources-between-roots" >}})** - using demonolith's transfer commands to move resources between two living roots - code and state, proven to change nothing, with the Snap CD wiring updated
