@@ -31,7 +31,6 @@ These ship reference deployments for running Snap CD components in your environm
 |------------|--------------|
 | [schrieksoft/snapcd-deployment-docker](https://github.com/schrieksoft/snapcd-deployment-docker) | Reference Docker Compose stack for Server + Runner + Agent (modular — each component is independently deployable) |
 | [schrieksoft/snapcd-deployment-kubernetes](https://github.com/schrieksoft/snapcd-deployment-kubernetes) | Reference Kubernetes manifests (Kustomize) for Server + Runner + Agent, each in its own namespace |
-| [schrieksoft/snapcd-deployment-local](https://github.com/schrieksoft/snapcd-deployment-local) | Reference local-binary setup — downloads release zips from GitHub and runs them as native processes |
 
 ### Samples
 

@@ -15,7 +15,6 @@ Each of the repositories below contains a `components/` directory with one self-
 |-----------|----------------------|
 | Docker / Compose | [schrieksoft/snapcd-deployment-docker](https://github.com/schrieksoft/snapcd-deployment-docker) |
 | Kubernetes (Kustomize) | [schrieksoft/snapcd-deployment-kubernetes](https://github.com/schrieksoft/snapcd-deployment-kubernetes) |
-| Local (native binaries) | [schrieksoft/snapcd-deployment-local](https://github.com/schrieksoft/snapcd-deployment-local) |
 
 Each repo tracks the matching Snap CD release. The sections below give you a sense of the minimum shape per component so you know what you're looking at when you open one of the reference repos.
 
