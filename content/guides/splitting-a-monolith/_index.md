@@ -73,6 +73,8 @@ Along the way demonolith reconstructs the inputs the monolith resolved silently:
 
 Retiring the monolith — its pipelines and its old state — is deliberately left as a human step, taken only after every module verifies clean.
 
+If the monolith is already a Snap CD Module, you can run the migration from the Dashboard rather than a terminal. Pause the Module, and the **split** job runs the same chain against the ref carrying the code change, proving the plan and asking for approval before it writes any state. See [State Migrations]({{< relref "how-it-works/state-migrations" >}}).
+
 There is also an **unproven path** for when you want the mechanical split and migration without the checks: skip `--engine` on `refactor` (no validate), don't run `refactor diff` or `migrate verify`, and pass `--unproven` to `migrate run` to waive its proof precondition. The push guards still hold — empty or matching destinations only, never forced, backup taken — but a wrong split then surfaces after adoption instead of before the push, and the per-module tfvars files that prove writes are missing, so plan modules detached only with values passed by hand.
 
 ## Adopt into Snap CD
