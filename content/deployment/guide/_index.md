@@ -20,11 +20,11 @@ Each repo tracks the matching Snap CD release. The sections below give you a sen
 
 ## Kubernetes with Helm
 
-The Kubernetes repository publishes Helm charts to `oci://ghcr.io/schrieksoft/charts` with each of its releases, signed with cosign:
+Each release of the Kubernetes repository publishes Helm charts to `oci://ghcr.io/schrieksoft/charts`, signed with cosign:
 
 | Chart | Installs |
 |-------|----------|
-| `snapcd` | The Server, a Runner and optionally the Agent, in one namespace and wired to each other |
+| `snapcd` | The Server, a Runner and optionally the Agent, in one namespace and already connected to each other |
 | `snapcd-server` | The Server, with SQL Server and Redis bundled for trials |
 | `snapcd-runner` | A Runner |
 | `snapcd-agent` | The Agent and its Claude Sidecar |
@@ -34,11 +34,11 @@ helm install snapcd oci://ghcr.io/schrieksoft/charts/snapcd --namespace snapcd -
 kubectl -n snapcd port-forward svc/snapcd-server 5000:5000
 ```
 
-This comes up with the Dashboard at `http://localhost:5000` and a connected Runner, using the same sample settings as the Docker reference deployment. Those settings are public, so replace the keys, passwords and credentials before the Server holds anything that matters. For anything beyond a trial, turn the bundled SQL Server and Redis off and point the Server at managed services with `server.database.*` and `server.cache.*`.
+That gives you the Dashboard at `http://localhost:5000` and a Runner that's already connected, with the same sample settings as the Docker reference deployment. Those settings are public, so replace the keys, passwords and credentials before the Server holds anything that matters. Beyond a trial, turn off the bundled SQL Server and Redis and use managed ones instead, with `server.database.*` and `server.cache.*`.
 
-A chart's version is the release of the Kubernetes repository; its app version is the Snap CD release it deploys. Every value is listed in the chart's README in the repository, under `charts/`. The repository's Kustomize manifests are rendered from the same charts, so the two stay identical.
+A chart's version is the Kubernetes repository's release, and its app version is the Snap CD release it installs. Each chart's README, under `charts/` in the repository, lists every value. The repository's Kustomize manifests are generated from the same charts, so the two can't drift apart.
 
-To install a Runner against Snap CD Cloud or a Server you do not host, use the `snapcd-runner` chart on its own with your Runner's settings in `config.appsettings` and its client secret in `credentials`.
+For a Runner that connects to Snap CD Cloud, or to a Server you don't host, install the `snapcd-runner` chart on its own: put your Runner's settings in `config.appsettings` and its client secret in `credentials`.
 
 ## Server
 
@@ -82,7 +82,7 @@ services:
       - runner-data:/app/runnerdata
 ```
 
-On Kubernetes the recommended pattern is a StatefulSet: the working-directory volume persists per Pod, and if the Runner record's `allow_multiple_instances` is set you can scale replicas horizontally. The Runner image ships OpenTofu and Terraform; the Helm chart's `engines.download` setting downloads other versions when the Pod starts.
+On Kubernetes the recommended pattern is a StatefulSet: the working-directory volume persists per Pod, and if the Runner record's `allow_multiple_instances` is set you can scale replicas horizontally. The Runner image comes with OpenTofu and Terraform. To use other versions, set `engines.download` in the Helm chart and the Pod downloads them when it starts.
 
 ## Agent
 
