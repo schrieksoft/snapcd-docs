@@ -57,7 +57,7 @@ The **Runner** lives alongside the Server in the [schrieksoft/snapcd](https://gi
 The Runner can be deployed via any of the following reference repositories. Each is substrate-specific and contains a self-contained `components/runner/` sub-deployment you can bring up on its own:
 
 - Using Docker Compose: [github.com/schrieksoft/snapcd-deployment-docker](https://github.com/schrieksoft/snapcd-deployment-docker)
-- On Kubernetes using Kustomize: [github.com/schrieksoft/snapcd-deployment-kubernetes](https://github.com/schrieksoft/snapcd-deployment-kubernetes)
+- On Kubernetes using Helm or Kustomize: [github.com/schrieksoft/snapcd-deployment-kubernetes](https://github.com/schrieksoft/snapcd-deployment-kubernetes), which publishes the `snapcd-runner` chart to `oci://ghcr.io/schrieksoft/charts`
 
 For the purposes of this guide we recommend using the Docker Compose approach.
 

@@ -14,9 +14,31 @@ Each of the repositories below contains a `components/` directory with one self-
 | Substrate | Reference repository |
 |-----------|----------------------|
 | Docker / Compose | [schrieksoft/snapcd-deployment-docker](https://github.com/schrieksoft/snapcd-deployment-docker) |
-| Kubernetes (Kustomize) | [schrieksoft/snapcd-deployment-kubernetes](https://github.com/schrieksoft/snapcd-deployment-kubernetes) |
+| Kubernetes (Helm or Kustomize) | [schrieksoft/snapcd-deployment-kubernetes](https://github.com/schrieksoft/snapcd-deployment-kubernetes) |
 
 Each repo tracks the matching Snap CD release. The sections below give you a sense of the minimum shape per component so you know what you're looking at when you open one of the reference repos.
+
+## Kubernetes with Helm
+
+The Kubernetes repository publishes Helm charts to `oci://ghcr.io/schrieksoft/charts` with each of its releases, signed with cosign:
+
+| Chart | Installs |
+|-------|----------|
+| `snapcd` | The Server, a Runner and optionally the Agent, in one namespace and wired to each other |
+| `snapcd-server` | The Server, with SQL Server and Redis bundled for trials |
+| `snapcd-runner` | A Runner |
+| `snapcd-agent` | The Agent and its Claude Sidecar |
+
+```bash
+helm install snapcd oci://ghcr.io/schrieksoft/charts/snapcd --namespace snapcd --create-namespace
+kubectl -n snapcd port-forward svc/snapcd-server 5000:5000
+```
+
+This comes up with the Dashboard at `http://localhost:5000` and a connected Runner, using the same sample settings as the Docker reference deployment. Those settings are public, so replace the keys, passwords and credentials before the Server holds anything that matters. For anything beyond a trial, turn the bundled SQL Server and Redis off and point the Server at managed services with `server.database.*` and `server.cache.*`.
+
+A chart's version is the release of the Kubernetes repository; its app version is the Snap CD release it deploys. Every value is listed in the chart's README in the repository, under `charts/`. The repository's Kustomize manifests are rendered from the same charts, so the two stay identical.
+
+To install a Runner against Snap CD Cloud or a Server you do not host, use the `snapcd-runner` chart on its own with your Runner's settings in `config.appsettings` and its client secret in `credentials`.
 
 ## Server
 
@@ -37,7 +59,7 @@ services:
       - ./appsettings.External.json:/app/appsettings.External.json:ro
 ```
 
-The Server is stateless; all durable state lives in SQL Server. On Kubernetes the recommended pattern is a single Deployment (or N replicas with Redis as the SignalR backplane) behind a TLS-terminating Ingress. Database schema migrations apply automatically on startup.
+The Server is stateless; all durable state lives in SQL Server. On Kubernetes the recommended pattern is a single Deployment behind a TLS-terminating Ingress. Database schema migrations apply automatically on startup.
 
 ## Runner
 
@@ -60,7 +82,7 @@ services:
       - runner-data:/app/runnerdata
 ```
 
-On Kubernetes the recommended pattern is a StatefulSet — the working-directory volume persists per-Pod, and if the Runner record's `allow_multiple_instances` is set you can scale replicas horizontally. The reference Kubernetes manifests use an init-container to download the `terraform` and `tofu` binaries on first start.
+On Kubernetes the recommended pattern is a StatefulSet: the working-directory volume persists per Pod, and if the Runner record's `allow_multiple_instances` is set you can scale replicas horizontally. The Runner image ships OpenTofu and Terraform; the Helm chart's `engines.download` setting downloads other versions when the Pod starts.
 
 ## Agent
 
@@ -91,4 +113,4 @@ services:
       - SNAPCD_SERVER_URL=https://snapcd.example.com
 ```
 
-On Kubernetes the recommended pattern is a Deployment per process (orchestrator + one per sidecar), with the sidecars exposed as ClusterIP Services so the orchestrator can reach them by name. For horizontal scale-out, set `allow_multiple_instances = true` on the Agent record and bump the orchestrator's replica count.
+On Kubernetes the recommended pattern is a Deployment per process (orchestrator + one per sidecar), with the sidecars exposed as ClusterIP Services so the orchestrator can reach them by name.
