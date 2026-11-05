@@ -14,7 +14,7 @@ In these cases it might make sense to separate into different **Stack**.
 
 We do not recommend separating different functional areas within an infrastructure ecosystem into separate **Stacks**. For example, if your production infrastructure consists of large sub-projects dealing with networking, storage, applications etc., place all of these in the same **Stack**, but organise them into different **Namespaces** instead.
 
-**Modules** can references the [outputs]({{< relref "how-it-works/outputs" >}}) from any other **Modules** within the same **Stack**
+**Modules** can references the [outputs]({{< relref "how-it-works/outputs" >}}) from any other **Modules** within the same **Stack**, unless the producing **Module** [restricts them]({{< relref "resources/output-restrictions-and-supplies" >}})
 
 You can see the full **Stack** specification [here](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/stack).
 

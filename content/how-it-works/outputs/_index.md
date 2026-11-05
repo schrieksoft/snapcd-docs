@@ -10,6 +10,8 @@ Snap CD stores the outputs from your Terraform / OpenTofu [modules]({{< relref "
 
 An output can either by a **Literal Output** or it can be **Secret Scoped to Output Set**.
 
+By default any **Module** in the same [Stack]({{< relref "resources/stack-namespace-module#stack" >}}) can read these **Outputs** as inputs. A producing **Module** can narrow that; see [Output Restrictions and Supplies]({{< relref "resources/output-restrictions-and-supplies" >}}).
+
 
 ## Non-sensitive Outputs (**Literal Outputs**)
 

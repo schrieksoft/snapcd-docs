@@ -21,7 +21,7 @@ The most straightforward way to define a **Module Input** is as a literal value.
 
 ## From Output
 
-**Module Inputs** can reference [Outputs]({{< relref "how-it-works/outputs" >}}) from any [Module]({{< relref "resources/stack-namespace-module#module" >}}) within the same [Stack]({{< relref "resources/stack-namespace-module#stack" >}}).
+**Module Inputs** can reference [Outputs]({{< relref "how-it-works/outputs" >}}) from any [Module]({{< relref "resources/stack-namespace-module#module" >}}) within the same [Stack]({{< relref "resources/stack-namespace-module#stack" >}}), unless the producing **Module** restricts them. See [Output Restrictions and Supplies]({{< relref "resources/output-restrictions-and-supplies" >}}).
 
 You can find the full specifications for how to use these here:
 - [Module Input (From Output)](https://registry.terraform.io/providers/schrieksoft/snapcd/latest/docs/resources/module_input_from_output)
@@ -31,7 +31,7 @@ See the [Outputs]({{< relref "how-it-works/outputs" >}}) section for more inform
 
 ## From Output Set
 
-**Module Inputs** can reference an **Output Set** from any **Module** within the same **Stack**. This will pull in all **Outputs** within the **Output Set**, mapping them to inputs with the same name as the **Output**. Let's that for example a **Module** with the following `outputs.tf`
+**Module Inputs** can reference an **Output Set** from any **Module** within the same **Stack**. This will pull in all **Outputs** within the **Output Set**, mapping them to inputs with the same name as the **Output**. Any **Outputs** the producing **Module** restricts are left out of the set; see [Output Restrictions and Supplies]({{< relref "resources/output-restrictions-and-supplies" >}}). Let's that for example a **Module** with the following `outputs.tf`
 
 ```hcl
 output my_first_output {
