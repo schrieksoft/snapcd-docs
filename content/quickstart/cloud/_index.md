@@ -65,11 +65,11 @@ The Runner needs to know which Server to connect to — for Cloud, this is the d
 
 ## Create a Stack
 
-Create a [Stack]({{< relref "resources/stack-namespace-module#stack" >}}) called "samples" via the portal at [snapcd.io/Stacks](https://snapcd.io/Stacks). We'll use this Stack for the sample project.
+Create a [Stack]({{< relref "resources/stack-namespace-module#stack" >}}) called "samples" via the portal at [snapcd.io/Tree](https://snapcd.io/Tree). We'll use this Stack for the sample project.
 
 ## Create a Secret
 
-Snap CD allows you to create [Secrets]({{< relref "resources/secrets" >}}) that can be passed into Modules as inputs. Create a Secret on your "samples" Stack via the portal at [snapcd.io/Stacks/samples?action=Secrets](https://snapcd.io/Stacks/samples?action=Secrets). Name the secret "quickstart-secret" and give it any text value.
+Snap CD allows you to create [Secrets]({{< relref "resources/secrets" >}}) that can be passed into Modules as inputs. Create a Secret on your "samples" Stack via the portal at [snapcd.io/Tree?stack=samples&action=Configure](https://snapcd.io/Tree?stack=samples&action=Configure). Name the secret "quickstart-secret" and give it any text value.
 
 ## Deploy the Sample Project
 
